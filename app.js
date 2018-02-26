@@ -74,7 +74,6 @@ function startSend(Sender){
             mediaText = mediaText.replace(`[${parse}]`, `</a>${nameVk}<a>`)
             mediaText = `<a>${mediaText}</a>`
         }
-        console.log(mediaText)
         if (!!media.attachments) { // Post generator start
             media = media.attachments
             let array = [],
