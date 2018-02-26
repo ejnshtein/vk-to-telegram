@@ -5,9 +5,7 @@
   "scripts": {
     "start": "node ./app.js"
   },
-  "_requiredBy": [
-    "/app"
-  ],
+  "main": "/app.js",
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
