@@ -7,8 +7,8 @@ Powered by [Telegraf](https://github.com/telegraf/telegraf)
 Soon i'll push it to npm package, but soon
 ### And now a bit example
 ```js
-const vkTotTelegram = require('vk-to-telegram'),
-    sender = new vkTotTelegram({
+const vkToTelegram = require('vk-to-telegram'),
+    sender = new vkToTelegram({
         botToken: token,
         chatName: chatName,
         ownerId: ownerId,
