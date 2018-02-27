@@ -1,7 +1,7 @@
 {
   "name": "vk-to-telegram",
   "version": "0.0.2a",
-  "private": true,
+  "private": false,
   "scripts": {
     "start": "node ./app.js"
   },
