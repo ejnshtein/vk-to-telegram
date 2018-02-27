@@ -7,15 +7,15 @@ Powered by [Telegraf](https://github.com/telegraf/telegraf)
 Soon i'll push it to npm package, but soon
 ### And now a bit example
 ```js
-    const vkTotTelegram = require('vk-to-telegram'),
-      sender = new vkTotTelegram({
-        botToken: token,
-        chatName: chatName,
-        ownerId: ownerId,
-        vkConfirmation: vkConfirmation,
-        vkToken: vkToken
-      })
-    sender.startListen()
+const vkTotTelegram = require('vk-to-telegram'),
+    sender = new vkTotTelegram({
+    botToken: token,
+    chatName: chatName,
+    ownerId: ownerId,
+    vkConfirmation: vkConfirmation,
+    vkToken: vkToken
+    })
+sender.startListen()
 ```
 ### Variables from example
 | Variable | Required | Description |
