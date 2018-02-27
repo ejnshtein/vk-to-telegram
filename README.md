@@ -26,6 +26,7 @@ Required:
  - Open settings in created application and copy application id
  - Open this link with replace <this> to your application id: https://oauth.vk.com/authorize?client_id=<YOUR APPLICATION ID>&display=page&redirect_uri=http://vk.com/&scope=offline,video,docs&response_type=code&v=5.73
  - Click allow all that need's and it's all! Your token is in query url, do not copy all link, only token without other params!!!  
+ 
 Optional:   
 *fromId* = VK group id with '-'in start or nothing, if you don't need check.  
 *path* = default: '/'  
