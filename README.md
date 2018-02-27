@@ -9,11 +9,11 @@ Soon i'll push it to npm package, but soon
 ```js
 const vkTotTelegram = require('vk-to-telegram'),
     sender = new vkTotTelegram({
-    botToken: token,
-    chatName: chatName,
-    ownerId: ownerId,
-    vkConfirmation: vkConfirmation,
-    vkToken: vkToken
+        botToken: token,
+        chatName: chatName,
+        ownerId: ownerId,
+        vkConfirmation: vkConfirmation,
+        vkToken: vkToken
     })
 sender.startListen()
 ```
