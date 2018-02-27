@@ -2,7 +2,7 @@
 Powered by [Telegraf](https://github.com/telegraf/telegraf)  
 ## What is this?  
 This is a utility for express to send fresh posts from VK to Telegram!  
-Be careful, it doesn't send audio and poll's(maybe fix soon).
+Be careful, it doesn't send **audio and poll's**(maybe fix soon).
 ## Installation
     npm install git+https://github.com/ejnshtein/vk-to-telegram.git
 Soon i'll push it to npm package, but soon
