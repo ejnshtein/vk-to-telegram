@@ -18,7 +18,7 @@ const app = require('express')(),
         vkConfirmation: vkConfirmation,
         vkToken: vkToken
     })
-app.use(bodyParser.json())
+app.use(bodyParser.json()) // Must needed
 app.post('/', vkToTg.send)
 
 app.listen(80,()=>{
