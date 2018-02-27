@@ -1,4 +1,4 @@
-# VK TO TELEGRAM
+# VK TO TELEGRAM SENDER
 
 ### Readme and code will be rewrited soon!!!
 Powered by [Telegraf](https://github.com/telegraf/telegraf)  
