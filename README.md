@@ -8,16 +8,16 @@ Be careful, it doesn't send **audio and poll's**(maybe fix soon).
 Soon i'll push it to npm package
 ### And now a bit example
 ```js
-const vkToTelegram = require('vk-to-telegram'),
+const app = require('express')(),
+    bodyParser = require('body-parser'),
+    vkToTelegram = require('vk-to-telegram'),
     vkToTg = new vkToTelegram({
         botToken: token,
         chatName: chatName,
         ownerId: ownerId,
         vkConfirmation: vkConfirmation,
         vkToken: vkToken
-    }),
-    app = require('express')(),
-    bodyParser = require('body-parser')
+    })
 app.use(bodyParser.json())
 app.post('/', vkToTg.send)
 
