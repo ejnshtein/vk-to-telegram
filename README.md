@@ -6,7 +6,7 @@ Powered by [Telegraf](https://github.com/telegraf/telegraf)
     npm install git+https://github.com/ejnshtein/vk-to-telegram.git
 Soon i'll push it to npm package, but soon
 ### And now a bit example
-
+```js
     const vkTotTelegram = require('vk-to-telegram'),
       sender = new vkTotTelegram({
         botToken: token,
@@ -16,6 +16,7 @@ Soon i'll push it to npm package, but soon
         vkToken: vkToken
       })
     sender.startListen()
+```
 ### Variables from example
 | Variable | Required | Description |
 | - |-| - |
