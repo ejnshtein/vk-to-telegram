@@ -5,7 +5,7 @@ This is a utility for express to send fresh posts from VK to Telegram!
 Be careful, it doesn't send **audio and poll's**(maybe fix soon).
 ## Installation
     npm install git+https://github.com/ejnshtein/vk-to-telegram.git
-Soon i'll push it to npm package, but soon
+Soon i'll push it to npm package
 ### And now a bit example
 ```js
 const vkToTelegram = require('vk-to-telegram'),
