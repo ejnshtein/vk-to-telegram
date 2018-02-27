@@ -4,8 +4,7 @@ Powered by [Telegraf](https://github.com/telegraf/telegraf)
 This is a utility for express to send fresh posts from VK to Telegram!  
 Be careful, it doesn't send **audio and poll's**(maybe fix soon).
 ## Installation
-    npm install git+https://github.com/ejnshtein/vk-to-telegram.git
-Soon i'll push it to npm package
+    npm install vk-to-telegram --save
 ### And now a bit example
 ```js
 const app = require('express')(),
@@ -19,7 +18,7 @@ const app = require('express')(),
         vkToken: vkToken
     })
 app.use(bodyParser.json()) // Must needed
-app.post('/', vkToTg.send)
+app.post('/', vkToTg.send) // When any content will be posted to this path it's gone to sending to Telegram
 
 app.listen(80,()=>{
   console.log('listening on port 80')
