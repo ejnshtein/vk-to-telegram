@@ -20,11 +20,11 @@ sender.startListen()
 ### Variables from example
 | Variable | Required | Description |
 | - |-| - |
-| `token` | Yes | bot token from [Botfather](https://t.me/botfather)    |
-| `chatName` | Yes  | telegram channel or group link, like '[@tavernofheroes](https://t.me/tavernofoverwatchnews)'       |
-| `ownerId`| Yes | Your telegram id for sending error if they are. U can get know it from [@getidsbot](https://t.me/getidsbot) |
-| `vkConfirmation` | Yes | confirmation string from ur group callback api server: ![](https://i.imgur.com/f9KDETa.png?2)  |
-| `vkToken` | Yes | Follow the instructions below:|
+| `token` | **Yes** | bot token from [Botfather](https://t.me/botfather)    |
+| `chatName` | **Yes**  | telegram channel or group link, like '[@tavernofheroes](https://t.me/tavernofoverwatchnews)'       |
+| `ownerId`|**Yes** | Your telegram id for sending error if they are. U can get know it from [@getidsbot](https://t.me/getidsbot) |
+| `vkConfirmation` | **Yes** | confirmation string from ur group callback api server: ![](https://i.imgur.com/f9KDETa.png?2)  |
+| `vkToken` | **Yes** | Follow the instructions below:|
 |||1. Create Standalone application here: [https://vk.com/apps?act=manage](https://vk.com/apps?act=manage) |
 |||2. Open settings in created application and copy application id |
 |||3. Open this link with replace your application id: |
