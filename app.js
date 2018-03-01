@@ -2,11 +2,11 @@
 class Sender {
     constructor (options){
         this.token = options.botToken
-        this.chatName = options.chatName 
+        this.chatName = options.chatName.includes('@') ? options.chatName.replace('@','') : options.chatName
         this.vkConfirmation = options.vkConfirmation
         this.ownerId = options.ownerId
-        this.fromId = options.fromId || false
         this.vkToken = options.vkToken
+        this.fromId = options.fromId || false
         this.send = (req, res) => startSending(this, req, res)
     }
 }
@@ -37,7 +37,9 @@ function startSending(allParams, req, res){
                         if (!!myObj.object.copy_history) {
                             let cophhis = myObj.object.copy_history,
                                 last = cophhis.length - 1
-                            vkPost(cophhis[last], () => {})
+                            vkPost(cophhis[last], () => {
+                                console.log('All sent!')
+                            })
                         }
                     })
                 }
@@ -45,13 +47,13 @@ function startSending(allParams, req, res){
         }
         function vkPost(media, output) {
             let mediaText
-            //console.log(media) // Debug here
+            console.log(media) // Debug here
             if (media.text) {
                 mediaText = media.text
             } else {
                 mediaText = ''
             }
-            if (mediaText.includes('[') && mediaText.includes('|') && mediaText.includes(']')){
+            while (mediaText.includes('[') && mediaText.includes('|') && mediaText.includes(']')){
                 let parse = S(mediaText).between('[',']').s,
                     startedLetter = mediaText.indexOf('['),
                     finishLetter = mediaText.lastIndexOf(']'),
@@ -108,20 +110,22 @@ function startSending(allParams, req, res){
                             bot.telegram.sendPhoto(allParams.chatid, helps.getImgRes(media[0].photo), {
                                 caption: mediaText,
                                 parse_mode: 'HTML',
-                                reply_markup: yes ? keyboardStr : ''
+                                reply_markup: yes ? keyboardStr : '',
+                                disable_web_page_preview: true
                             }).then(output())
                         } else if (!mediaText && media[0].photo.text.length < 200) {
                             mediaText = media[0].photo.text
                             bot.telegram.sendPhoto(allParams.chatid, helps.getImgRes(media[0].photo), {
                                 caption: mediaText,
                                 parse_mode: 'HTML',
-                                reply_markup: yes ? keyboardStr : ''
+                                reply_markup: yes ? keyboardStr : '',
+                                disable_web_page_preview: true
                             }).then(output())
                         } else if (mediaText.length > 200){
                             bot.telegram.sendMessage(allParams.chatid,`<a href="${helps.getImgRes(media[0].photo)}">&#160;</a>${mediaText}` ,{
                                 parse_mode: 'HTML',
                                 reply_markup: yes ? keyboardStr : '',
-                                disable_web_page_preview: false,
+                                disable_web_page_preview: false
                             })
                         }
                     } else if (media[0].type == 'doc') {
@@ -140,7 +144,8 @@ function startSending(allParams, req, res){
                                     }, {
                                         caption: mediaText,
                                         reply_markup: yes ? keyboardStr : '',
-                                        parse_mode: 'HTML'
+                                        parse_mode: 'HTML',
+                                        disable_web_page_preview: true
                                     }).then(output())
                                 } else {
                                     bot.telegram.sendMessage(allParams.chatid, mediaText).then(()=>{
@@ -150,14 +155,16 @@ function startSending(allParams, req, res){
                                         }, {
                                             caption: mediaText,
                                             reply_markup: yes ? keyboardStr : '',
-                                            parse_mode: 'HTML'
+                                            parse_mode: 'HTML',
+                                            disable_web_page_preview: true
                                         }).then(output())
                                     })
                                 }
                             } else {
                                 bot.telegram.sendMessage(allParams.chatid, `<a>${mediaText}</a>\n\n<a href="${res.url}>${res.title}</a>`, {
                                     reply_markup: yes ? keyboardStr : '',
-                                    parse_mode: 'HTML'
+                                    parse_mode: 'HTML',
+                                    disable_web_page_preview: false
                                 }).then(output())
                             }
                         })
@@ -197,7 +204,8 @@ function startSending(allParams, req, res){
                             media: {
                                 url: helps.getImgRes(media[key].photo)
                             },
-                            caption: taxt ? mediaText : ''
+                            caption: taxt ? mediaText : '',
+                            parse_mode: 'HTML'
                         })
                         taxt = false
                     }
@@ -259,7 +267,8 @@ function startSending(allParams, req, res){
                                             filename: res.title
                                         }, {
                                             reply_markup: yes ? keyboardStr : '',
-                                            parse_mode: 'HTML'
+                                            parse_mode: 'HTML',
+                                            disable_web_page_preview: true
                                         }).then(() => {
                                             i++
                                             mediaPoster()
@@ -267,7 +276,8 @@ function startSending(allParams, req, res){
                                     } else {
                                         bot.telegram.sendMessage(allParams.chatid, `<a href="${res.url}>${res.title}</a>`, {
                                             reply_markup: yes ? keyboardStr : '',
-                                            parse_mode: 'HTML'
+                                            parse_mode: 'HTML',
+                                            disable_web_page_preview: false
                                         }).then(() => {
                                             i++
                                             mediaPoster()
