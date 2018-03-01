@@ -1,9 +1,21 @@
 {
   "name": "vk-to-telegram",
   "version": "0.0.4",
+  "description": "Vk to telegram forwarder",
+  "author": "ejnshtein",
+  "keywords": [
+    "callback api",
+    "vk",
+    "telegram",
+    "telegraf",
+    "bot api",
+    "vk callback api",
+    "express",
+    "string"
+  ],
   "private": false,
   "scripts": {
-    "start": "node ./app.js"
+    "start": "node app.js"
   },
   "module": "app",
   "main": "app",
@@ -13,5 +25,9 @@
     "request": "^2.83.0",
     "string": "^3.3.3",
     "telegraf": "^3.18.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ejnshtein/vk-to-telegram.git"
   }
 }
