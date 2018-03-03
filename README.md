@@ -6,7 +6,7 @@ Be careful, it doesn't send **audio and poll's**(maybe fix soon).
 ## Where I can see how it looks?
 For example, this code sending posts from [Tavern of Heroes | Overwatch](https://vk.com/tavernofoverwatch) to Telegram channel [Tavern of Overwatch | News](https://t.me/tavernofoverwatchnews)
 ## Installation
-    npm install vk-to-telegram --save
+    npm install vk-to-telegram@latest --save
 ### Example
 ```js
 const app = require('express')(),
@@ -37,7 +37,7 @@ app.listen(80,()=>{
 |||1. Create Standalone application here: [https://vk.com/apps?act=manage](https://vk.com/apps?act=manage) |
 |||2. Open settings in created application and copy application id |
 |||3. Open this link with replace your application id: |
-|||https://oauth.vk.com/authorize?client_id=YOUR APPLICATION ID&display=page&redirect_uri=http://vk.com/&scope=offline,video,docs&response_type=code&v=5.73|
+|||https://oauth.vk.com/authorize?client_id=YOUR APPLICATION ID&display=page&redirect_uri=http://vk.com/&scope=offline,video,docs&response_type=token&v=5.73|
 |||4. Click allow all that need's and it's all! Your token is in query url, do not copy all link, only token without other params!!!  |
 |`fromId` | Optional | VK group id with '-'in start or nothing, if you don't need check. |
 
