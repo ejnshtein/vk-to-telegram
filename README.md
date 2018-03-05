@@ -4,7 +4,8 @@ Powered by [Telegraf](https://github.com/telegraf/telegraf)
 It is a tool for express who via using VK callback api group forwards posts in channel or chat in Telegram!  
 Be careful, it doesn't send **audio and poll's**(maybe fix soon).
 ## Where I can see how it looks?
-For example, this code sending posts from [Tavern of Heroes | Overwatch](https://vk.com/tavernofoverwatch) to Telegram channel [Tavern of Overwatch | News](https://t.me/tavernofoverwatchnews)
+For example, this code sending posts from [Tavern of Heroes | Overwatch](https://vk.com/tavernofoverwatch) to Telegram channel [Tavern of Overwatch | News](https://t.me/tavernofoverwatchnews);  
+from [Oleg Livanov - One man army](https://vk.com/oleglivanovgaming) trought Heroku to Telegram channel [Oleg Livanov - One man army](https://t.me/oleglivanovgaming)
 ## Installation
     npm install vk-to-telegram@latest --save
 ### Example
