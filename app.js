@@ -56,12 +56,11 @@ function startSending(allParams, req, res){
             while (mediaText.includes('[') && mediaText.includes('|') && mediaText.includes(']')){
                 let parse = S(mediaText).between('[',']').s,
                     startedLetter = mediaText.indexOf('['),
-                    finishLetter = mediaText.lastIndexOf(']'),
+                    finishLetter = mediaText.indexOf(']'),
                     urlVk = `https://vk.com/${S(parse).between('','|').s}`,
                     nameVk = `${S(parse).between('|').s}`.link(urlVk)
-
                 mediaText = mediaText.replace(`[${parse}]`, `</a>${nameVk}<a>`)
-                mediaText = `<a>${mediaText}</a>`
+                mediaText = `${mediaText}`
             }
             if (!!media.attachments) { // Post generator start
                 media = media.attachments
@@ -92,7 +91,7 @@ function startSending(allParams, req, res){
                 ) {
                     if (media[0].type == 'video') {
                         helps.VkApiVideoGet(allParams.vkToken, media[0].video.owner_id, media[0].video.id, function (res) {
-                            bot.telegram.sendMessage(allParams.chatid, `<a href="${res.player}">&#160;</a>${mediaText}\n\n<a href="${res.player}">${res.title}</a>`, {
+                            bot.telegram.sendMessage(allParams.chatid, `<a href="${res.player}">&#160;</a><a>${mediaText}</a>\n\n<a href="${res.player}">${res.title}</a>`, {
                                 parse_mode: 'HTML',
                                 disable_web_page_preview: false,
                                 reply_markup: yes ? keyboardStr : ''
@@ -122,7 +121,7 @@ function startSending(allParams, req, res){
                                 disable_web_page_preview: true
                             }).then(output())
                         } else if (mediaText.length > 200){
-                            bot.telegram.sendMessage(allParams.chatid,`<a href="${helps.getImgRes(media[0].photo)}">&#160;</a>${mediaText}` ,{
+                            bot.telegram.sendMessage(allParams.chatid,`<a href="${helps.getImgRes(media[0].photo)}">&#160;</a><a>${mediaText}</a>` ,{
                                 parse_mode: 'HTML',
                                 reply_markup: yes ? keyboardStr : '',
                                 disable_web_page_preview: false
@@ -180,7 +179,7 @@ function startSending(allParams, req, res){
                                 }]
                             ]
                         }
-                        bot.telegram.sendMessage(allParams.chatid, `<a href="${helps.getImgRes(media[0].album.thumb)}">&#160;</a>${mediaText}`, {
+                        bot.telegram.sendMessage(allParams.chatid, `<a href="${helps.getImgRes(media[0].album.thumb)}">&#160;</a><a>${mediaText}</a>`, {
                             parse_mode: 'HTML',
                             reply_markup: keyboardStr,
                             disable_web_page_preview: false,
@@ -189,7 +188,7 @@ function startSending(allParams, req, res){
                         })
                     }
                 } else if ((media.length == 1) && (media[0].type == 'link')) {
-                    bot.telegram.sendMessage(allParams.chatid, `<a href="${media[0].link.url}">&#160;</a>${mediaText}\n\n<a href="${media[0].link.url}">Link</a>`, {
+                    bot.telegram.sendMessage(allParams.chatid, `<a href="${media[0].link.url}">&#160;</a><a>${mediaText}</a>\n\n<a href="${media[0].link.url}">Link</a>`, {
                         disable_web_page_preview: false,
                         parse_mode: 'HTML'
                     }).then(() => {
