@@ -47,7 +47,7 @@ function startSending(allParams, req, res){
         }
         function vkPost(media, output) {
             let mediaText
-            console.log(media) // Debug here
+            //console.log(media) // Debug here
             if (media.text) {
                 mediaText = media.text
             } else {
@@ -62,6 +62,7 @@ function startSending(allParams, req, res){
                 mediaText = mediaText.replace(`[${parse}]`, `</a>${nameVk}<a>`)
                 mediaText = `${mediaText}`
             }
+            //console.log(mediaText)
             if (!!media.attachments) { // Post generator start
                 media = media.attachments
                 let array = [],
@@ -107,7 +108,7 @@ function startSending(allParams, req, res){
                     if (media[0].type == 'photo') {
                         if (mediaText.length < 200 && !!mediaText) {
                             bot.telegram.sendPhoto(allParams.chatid, helps.getImgRes(media[0].photo), {
-                                caption: mediaText,
+                                caption: `<a>${mediaText}</a>`,
                                 parse_mode: 'HTML',
                                 reply_markup: yes ? keyboardStr : '',
                                 disable_web_page_preview: true
@@ -115,7 +116,7 @@ function startSending(allParams, req, res){
                         } else if (!mediaText && media[0].photo.text.length < 200) {
                             mediaText = media[0].photo.text
                             bot.telegram.sendPhoto(allParams.chatid, helps.getImgRes(media[0].photo), {
-                                caption: mediaText,
+                                caption: `<a>${mediaText}</a>`,
                                 parse_mode: 'HTML',
                                 reply_markup: yes ? keyboardStr : '',
                                 disable_web_page_preview: true
@@ -141,7 +142,7 @@ function startSending(allParams, req, res){
                                         url: res.url,
                                         filename: res.title
                                     }, {
-                                        caption: mediaText,
+                                        caption: `<a>${mediaText}</a>`,
                                         reply_markup: yes ? keyboardStr : '',
                                         parse_mode: 'HTML',
                                         disable_web_page_preview: true
@@ -152,7 +153,7 @@ function startSending(allParams, req, res){
                                             url: res.url,
                                             filename: res.title
                                         }, {
-                                            caption: mediaText,
+                                            caption: `<a>${mediaText}</a>`,
                                             reply_markup: yes ? keyboardStr : '',
                                             parse_mode: 'HTML',
                                             disable_web_page_preview: true
@@ -203,7 +204,7 @@ function startSending(allParams, req, res){
                             media: {
                                 url: helps.getImgRes(media[key].photo)
                             },
-                            caption: taxt ? mediaText : '',
+                            caption: taxt ? `<a>${mediaText}</a>` : '',
                             parse_mode: 'HTML'
                         })
                         taxt = false
