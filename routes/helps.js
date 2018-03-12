@@ -31,6 +31,9 @@ exports.VkApiVideoGet = function (token, owner, id, output) {
             if (res.player.includes('https://player.vimeo.com/video')) {
                 res.player = res.player.replace('player.', '').replace('video/', '')
             }
+            if (res.player.includes('https://www.youtube.com/embed/')){
+                res.player = res.player.replace('embed/', 'watch?v=')
+            }
             return output(res)
         })
 }
