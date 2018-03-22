@@ -34,7 +34,7 @@ function startSending(allParams, req, res){
             if (myObj.type == "wall_post_new") {
                 if (myObj.object.post_type == "post") {
                     vkPost(myObj.object, () => {
-                        if (!!myObj.object.copy_history) {
+                        if (myObj.object.copy_history) {
                             let cophhis = myObj.object.copy_history,
                                 last = cophhis.length - 1
                             vkPost(cophhis[last], () => {
@@ -47,7 +47,7 @@ function startSending(allParams, req, res){
         }
         function vkPost(media, output) {
             let mediaText
-            //console.log(media) // Debug here
+            console.log(media) // Debug here
             if (media.text) {
                 mediaText = media.text
             } else {
@@ -63,7 +63,7 @@ function startSending(allParams, req, res){
                 mediaText = `${mediaText}`
             }
             //console.log(mediaText)
-            if (!!media.attachments) { // Post generator start
+            if (media.attachments) { // Post generator start
                 media = media.attachments
                 let array = [],
                     yes = false,
@@ -217,7 +217,7 @@ function startSending(allParams, req, res){
                     media = media.filter(res => res.type != 'link')
                     let i = 0
                     if (mediaText) {
-                        bot.telegram.sendMessage(allParams.chatid, mediaText, {
+                        bot.telegram.sendMessage(allParams.chatid, `<a>${mediaText}</a>`, {
                             reply_markup: yes ? keyboardStr : '',
                             disable_web_page_preview: true,
                             parse_mode: 'HTML'
@@ -279,6 +279,7 @@ function startSending(allParams, req, res){
                                                 parse_mode: 'HTML',
                                                 disable_web_page_preview: true
                                             }).then(() => {
+                                                yes = false
                                                 i++
                                                 mediaPoster()
                                             })
@@ -288,6 +289,7 @@ function startSending(allParams, req, res){
                                                 parse_mode: 'HTML',
                                                 disable_web_page_preview: false
                                             }).then(() => {
+                                                yes = false
                                                 i++
                                                 mediaPoster()
                                             })
@@ -295,7 +297,7 @@ function startSending(allParams, req, res){
                                     })
                                     break
                                 case 'album':
-                                    keyboardStr = {
+                                    let keyboard = {
                                         inline_keyboard: [
                                             [{
                                                 text: media[i].album.title,
@@ -304,7 +306,7 @@ function startSending(allParams, req, res){
                                         ]
                                     }
                                     bot.telegram.sendPhoto(allParams.chatid, helps.getImgRes(media[i].album.thumb), {
-                                        reply_markup: keyboardStr
+                                        reply_markup: keyboard
                                     }).then(() => {
                                         i++
                                         mediaPoster()
@@ -318,12 +320,10 @@ function startSending(allParams, req, res){
                 }
             } else {
                 if (mediaText) {
-                    bot.telegram.sendMessage(allParams.chatid, mediaText, {
+                    bot.telegram.sendMessage(allParams.chatid, `<a>${mediaText}</a>`, {
                         parse_mode: 'HTML',
                         disable_web_page_preview: false
-                    }).then(() => {
-                        output()
-                    })
+                    }).then(output())
                 } else {
                     output()
                 }
