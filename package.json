@@ -1,6 +1,6 @@
 {
   "name": "vk-to-telegram",
-  "version": "0.0.9b",
+  "version": "0.0.10",
   "description": "Vk to telegram forwarder",
   "author": "ejnshtein",
   "keywords": [
