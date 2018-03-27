@@ -2,7 +2,7 @@
 Powered by [Telegraf](https://github.com/telegraf/telegraf)  
 ## What is this?  
 It is a tool for express which using [VK callback api](https://vk.com/dev/callback_api) forwards posts from group in channel or chat in Telegram!  
-Be careful, it doesn't send **audio and poll's**(maybe fix soon).
+Be careful, it **doesn't** sent **audio and poll's**(maybe fix soon).
 ## Where I can see how it looks?
 For example, this sending posts from [Tavern of Heroes | Overwatch](https://vk.com/tavernofoverwatch) to Telegram channel [Tavern of Overwatch | News](https://t.me/tavernofoverwatchnews),  
 [Oleg Livanov - One man army](https://vk.com/oleglivanovgaming) trought [Heroku](https://heroku.com/) to Telegram channel [Oleg Livanov - One man army](https://t.me/oleglivanovgaming)
@@ -21,9 +21,9 @@ const app = require('express')(),
         vkToken: vkToken
     })
 app.use(bodyParser.json()) // Must needed
-app.post('/', vkToTg.send) // Now when any content will be posted to this path it's gone to sent to Telegram
+app.post('/', vkToTg.send) // Now any data that comes here will be sent to Telegram
 
-app.listen(80,()=>{
+app.listen(80,()=>{ // For heroku users - process.env.PORT https://scotch.io/tutorials/how-to-deploy-a-node-js-app-to-heroku
   console.log('listening on port 80')
 })  
 ```
@@ -48,5 +48,5 @@ For example, because I had a lot of bot's and when fixing the bug is inconvenien
 Also, I have an idea to add discord channel support, but it's just idea. ᕦ( ͡° ͜ʖ ͡°)ᕤ
 
 ### Contact
-Here's a telegram group ¯\\_(ツ)_/¯ https://t.me/vktotgforwarder  
+Here's a telegram [group](https://t.me/vktotgforwarder) ¯\\_(ツ)_/¯   
 Also u can write to me directly in [Telegram](https://t.me/ejnshtein) or by [mail](mailto:ejnshtein@dsgstng.com)

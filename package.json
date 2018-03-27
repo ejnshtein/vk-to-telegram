@@ -1,6 +1,6 @@
 {
   "name": "vk-to-telegram",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Vk to telegram forwarder",
   "author": "ejnshtein",
   "keywords": [
@@ -9,7 +9,8 @@
     "telegram",
     "telegraf",
     "bot api",
-    "vk callback api",
+    "telegram bot api",
+    "callback api",
     "express",
     "string"
   ],

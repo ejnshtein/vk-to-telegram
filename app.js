@@ -47,7 +47,7 @@ function startSending(allParams, req, res){
         }
         function vkPost(media, output) {
             let mediaText
-            console.log(media) // Debug here
+            //console.log(media) // Debug here
             if (media.text) {
                 mediaText = media.text
             } else {
@@ -193,6 +193,7 @@ function startSending(allParams, req, res){
                             break
                     }
                 } else if ((media.length == 1) && (media[0].type == 'link')) {
+                    console.log(media[0].link)
                     bot.telegram.sendMessage(allParams.chatid, `<a href="${media[0].link.url}">&#160;</a><a>${mediaText}</a>\n\n<a href="${media[0].link.url}">Link</a>`, {
                         disable_web_page_preview: false,
                         parse_mode: 'HTML'
