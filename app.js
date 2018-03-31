@@ -193,7 +193,7 @@ function startSending(allParams, req, res){
                             break
                     }
                 } else if ((media.length == 1) && (media[0].type == 'link')) {
-                    console.log(media[0].link)
+                    //console.log(media[0].link)
                     bot.telegram.sendMessage(allParams.chatid, `<a href="${media[0].link.url}">&#160;</a><a>${mediaText}</a>\n\n<a href="${media[0].link.url}">Link</a>`, {
                         disable_web_page_preview: false,
                         parse_mode: 'HTML'
@@ -267,9 +267,9 @@ function startSending(allParams, req, res){
                                     helps.VkApiDocGetById(allParams.vkToken, media[i].doc.owner_id, media[i].doc.id, (res) => {
                                         if (!res) {
                                             res = {}
-                                            res.url = media[0].doc.url,
-                                                res.title = media[0].doc.title,
-                                                res.size = media[0].doc.size
+                                            res.url = media[i].doc.url,
+                                                res.title = media[i].doc.title,
+                                                res.size = media[i].doc.size
                                         }
                                         if (res.size < 50000000) {
                                             bot.telegram.sendDocument(allParams.chatid, {
