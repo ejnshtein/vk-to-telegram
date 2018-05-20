@@ -25,16 +25,20 @@ exports.VkApiVideoGet = function (token, owner, id, output) {
         function (req, res) {
             res = JSON.parse(res.body)
             res = res.response.items[0]
-            if (res.player.includes('https://vk.com')) {
-                res.player = `https://vk.com/video${owner}_${id}`
+            if (res && res.player){
+                if (/https:\/\/vk\.com/i.test(res.player)) {
+                    res.player = `https://vk.com/video${owner}_${id}`
+                }
+                if (/https:\/\/player\.vimeo\.com\/video/i.test(res.player)) {
+                    res.player = res.player.replace(/player\./, '').replace(/video\//, '')
+                }
+                if (/https:\/\/www\.youtube\.com\/embed/i.test(res.player)){
+                    res.player = res.player.replace(/embed\//, 'watch?v=')
+                }
+                return output(res)//https://vk.com/video-102087446_456241089
+            } else {
+                return output({player: `https://vk.com/video${owner}_${id}`,title: 'Link'})
             }
-            if (res.player.includes('https://player.vimeo.com/video')) {
-                res.player = res.player.replace('player.', '').replace('video/', '')
-            }
-            if (res.player.includes('https://www.youtube.com/embed/')){
-                res.player = res.player.replace('embed/', 'watch?v=')
-            }
-            return output(res)
         })
 }
 exports.VkApiDocGetById = function (token, owner, id, output) {
