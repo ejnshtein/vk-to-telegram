@@ -107,14 +107,14 @@ function startSending(allParams, req, res){
                     ){
                     switch (media[0].type){
                         case 'photo':
-                            if (mediaText.length < 200 && !!mediaText) {
+                            if (mediaText.length < 190 && !!mediaText) {
                                 bot.telegram.sendPhoto(allParams.chatid, helps.getImgRes(media[0].photo), {
                                     caption: `<a>${mediaText}</a>`,
                                     parse_mode: 'HTML',
                                     reply_markup: yes ? keyboardStr : '',
                                     disable_web_page_preview: true
                                 }).then(output())
-                            } else if (!mediaText && media[0].photo.text.length < 200) {
+                            } else if (!mediaText && media[0].photo.text.length < 190) {
                                 mediaText = media[0].photo.text
                                 bot.telegram.sendPhoto(allParams.chatid, helps.getImgRes(media[0].photo), {
                                     caption: `<a>${mediaText}</a>`,
@@ -122,7 +122,7 @@ function startSending(allParams, req, res){
                                     reply_markup: yes ? keyboardStr : '',
                                     disable_web_page_preview: true
                                 }).then(output())
-                            } else if (mediaText.length > 200){
+                            } else if (mediaText.length > 190){
                                 bot.telegram.sendMessage(allParams.chatid,`<a href="${helps.getImgRes(media[0].photo)}">&#160;</a><a>${mediaText}</a>` ,{
                                     parse_mode: 'HTML',
                                     reply_markup: yes ? keyboardStr : '',
@@ -139,7 +139,7 @@ function startSending(allParams, req, res){
                                         res.size = media[0].doc.size
                                 }
                                 if (res.size < 50000000) {
-                                    if (mediaText.length < 200){
+                                    if (mediaText.length < 190){
                                         bot.telegram.sendDocument(allParams.chatid, {
                                             url: res.url,
                                             filename: res.title
@@ -172,7 +172,7 @@ function startSending(allParams, req, res){
                             })
                             break
                         case 'album':
-                            if (!mediaText && media[0].album.description.length < 200) {
+                            if (!mediaText && media[0].album.description.length < 190) {
                                 mediaText = media[0].album.description
                             }
                             keyboardStr = {
@@ -200,7 +200,7 @@ function startSending(allParams, req, res){
                     }).then(() => {
                         output()
                     })
-                } else if (mediaText.length < 200 && helps.isAlbum(media)) {
+                } else if (mediaText.length < 190 && helps.isAlbum(media)) {
                     let arr = []
                     for (key in media) {
                         arr.push({
@@ -240,7 +240,7 @@ function startSending(allParams, req, res){
                                             media: {
                                                 url: helps.getImgRes(media[i].photo)
                                             },
-                                            caption: media[i].photo.text.length < 200 ? media[i].photo.text : ''
+                                            caption: media[i].photo.text.length < 190 ? media[i].photo.text : ''
                                         })
                                         i++
                                     }
