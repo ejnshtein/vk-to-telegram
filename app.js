@@ -67,9 +67,9 @@ function startSending(params, req, res) {
                 } else {
                     mediaText = ''
                 }
-                console.log(mediaText)
+                //console.log(mediaText)
                 mediaText = mediaText.replace(/\[([\S]*)\|([\S\s]*?)\]/ig, `<a href="https://vk.com/$1">$2</a>`)
-                console.log(mediaText)
+                //console.log(mediaText)
                 if (media.attachments) { // Post generator start
                     media = media.attachments
                     let array = [],

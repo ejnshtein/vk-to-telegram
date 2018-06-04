@@ -65,7 +65,6 @@ function VkApiDocGetById(data) {
     return new Promise((res, rej) => {
         request.get(`https://api.vk.com/method/docs.getById?docs=${data.owner}_${data.id}&access_token=${vkToken}&v=5.71`,
             (req, response) => {
-                console.log(response.body)
                 body = JSON.parse(response.body)
                 res(body.response[0])
             })
