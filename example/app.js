@@ -4,7 +4,7 @@ const vkToTelegram = require('../'),
         chatName: 'telegram chat/channel name',
         vkConfirmation: 'group confirmation',
         ownerId: 'your telegram id',
-        fromId: 'your group id',
+        fromId: 'your group id(example: -103208430)', // optional
         vkToken: 'your very long token from vk api'
     }),
     app = require('express')(),
@@ -12,6 +12,6 @@ const vkToTelegram = require('../'),
 app.use(bodyParser.json())
 app.post('/', vkToTg.send)
 
-app.listen(80, () => { // For heroku users - process.env.PORT https://scotch.io/tutorials/how-to-deploy-a-node-js-app-to-heroku
+app.listen(80, () => {
     console.log('listening on port 80')
 })

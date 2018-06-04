@@ -1,8 +1,19 @@
+const Telegraf = require('telegraf'),
+    helps = require('./routes/helps')
 
 class Sender {
-    constructor (options){
+    /**
+     * @param {object} options
+     * @param {string} options.botToken - Telegram bot token from @botfather
+     * @param {string} options.chatName - Telegram chat name with @
+     * @param {string} options.vkConfirmation - Confirmation token from VK group
+     * @param {string} options.vkToken - Your VK API token
+     * @param {string} options.ownerId - Your telegram id (@getidsbot)
+     * @param {string} [options.fromId=false] - VK group id
+     */
+    constructor(options) {
         this.token = options.botToken
-        this.chatName = options.chatName.includes('@') ? options.chatName.replace('@','') : options.chatName
+        this.chatName = /^@/ig.test(options.chatName) ? options.chatName : `@${options.chatName}`
         this.vkConfirmation = options.vkConfirmation
         this.ownerId = options.ownerId
         this.vkToken = options.vkToken
@@ -10,326 +21,341 @@ class Sender {
         this.send = (req, res) => startSending(this, req, res)
     }
 }
-function startSending(allParams, req, res){
-    const Telegraf = require('telegraf'),
-        helps = require('./routes/helps'),
-        bot = new Telegraf(allParams.token),
-        S = require('string')
-    bot.telegram.getChat('@' + allParams.chatName).then(dada => {
-        allParams.chatid = dada.id
+
+function startSending(params, req, res) {
+    const bot = new Telegraf(params.token)
+    helps.setToken(params.vkToken)
+    bot.telegram.getChat(params.chatName).then(dada => {
+        params.chatid = dada.id
         let myObj = {}
         try {
             myObj = JSON.parse(JSON.stringify(req.body))
             console.log(myObj)
         } catch (e) {
-            bot.telegram.sendMessage(allParams.ownerId, `${Date()}\n\nHere's an error: \n\n${req.body}\n${req.ip}\n${req.baseUrl}`)
+            bot.telegram.sendMessage(params.ownerId, `${Date()}\n\nHere's an error: \n\n${req.body}\n${req.ip}\n${req.baseUrl}`)
             return
         }
         if (myObj.type == "confirmation") {
-            res.send(allParams.vkConfirmation)
+            res.status(200).send(params.vkConfirmation)
         } else {
-            res.send('ok').statusCode = '200'
+            res.status(200).send('ok')
         }
-        if (allParams.fromId ? myObj.object.from_id == allParams.fromId : true){
+        if (params.fromId ? myObj.object.from_id == params.fromId : true) {
             if (myObj.type == "wall_post_new") {
                 if (myObj.object.post_type == "post") {
-                    vkPost(myObj.object, () => {
-                        if (myObj.object.copy_history) {
-                            let cophhis = myObj.object.copy_history,
-                                last = cophhis.length - 1
-                            vkPost(cophhis[last], () => {
-                                console.log('All sent!')
-                            })
-                        }
-                    })
+                    vkPost(myObj.object)
+                        .then(() => {
+                            if (myObj.object.copy_history) {
+                                let cophhis = myObj.object.copy_history,
+                                    last = cophhis.length - 1
+                                vkPost(cophhis[last])
+                                    .then(() => console.log('All sent!'))
+                                    .catch(console.log)
+                            }
+                        })
+                        .catch(console.log)
                 }
             }
         }
-        function vkPost(media, output) {
-            let mediaText
-            //console.log(media) // Debug here
-            if (media.text) {
-                mediaText = media.text
-            } else {
-                mediaText = ''
-            }
-            while (mediaText.includes('[') && mediaText.includes('|') && mediaText.includes(']')){
-                let parse = S(mediaText).between('[',']').s,
-                    startedLetter = mediaText.indexOf('['),
-                    finishLetter = mediaText.indexOf(']'),
-                    urlVk = `https://vk.com/${S(parse).between('','|').s}`,
-                    nameVk = `${S(parse).between('|').s}`.link(urlVk)
-                mediaText = mediaText.replace(`[${parse}]`, `</a>${nameVk}<a>`)
-                mediaText = `${mediaText}`
-            }
-            //console.log(mediaText)
-            if (media.attachments) { // Post generator start
-                media = media.attachments
-                let array = [],
-                    yes = false,
-                    link,
-                    keyboardStr
-                for (let a = 0; a < media.length; a++) {
-                    array.push(media[a].type)
-                }
-                if (array.indexOf('link') != -1) {
-                    yes = true
-                    link = array.indexOf('link')
-                    keyboardStr = {
-                        inline_keyboard: [
-                            [{
-                                text: media[link].link.title,
-                                url: media[link].link.url
-                            }]
-                        ]
-                    }
-                }
-                media = media.filter(res => res.type != 'audio')
-                media = media.filter(res => res.type != 'poll')
-                if (
-                    ((media.length == 1) && (media[0].type == 'video')) ||
-                    ((media.length == 2) && (media[0].type == 'video') && (media[1].type == 'link') && (media[1].type != 'video' || media[1].type != 'photo' || media[1].type != 'doc' || media[1].type != 'album'))
-                ) {
-                    if (media[0].type == 'video') {
-                        helps.VkApiVideoGet(allParams.vkToken, media[0].video.owner_id, media[0].video.id, function (res) {
-                            bot.telegram.sendMessage(allParams.chatid, `<a href="${res.player}">&#160;</a><a>${mediaText}</a>\n\n<a href="${res.player}">${res.title}</a>`, {
-                                parse_mode: 'HTML',
-                                disable_web_page_preview: false,
-                                reply_markup: yes ? keyboardStr : ''
-                            }).then(() => {
-                                output()
-                            })
-                        })
-                    }
-                } else if (
-                    (media.length == 1) && (media[0].type == 'photo' || media[0].type == 'doc' || media[0].type == 'album') ||
-                    (media.length == 2) && (media[0].type == 'photo' || media[0].type == 'doc' || media[0].type == 'album') && (media[1].type == 'link') && (media[1].type != 'photo' || media[1].type != 'video')
-                    ){
-                    switch (media[0].type){
-                        case 'photo':
-                            if (mediaText.length < 190 && !!mediaText) {
-                                bot.telegram.sendPhoto(allParams.chatid, helps.getImgRes(media[0].photo), {
-                                    caption: `<a>${mediaText}</a>`,
-                                    parse_mode: 'HTML',
-                                    reply_markup: yes ? keyboardStr : '',
-                                    disable_web_page_preview: true
-                                }).then(output())
-                            } else if (!mediaText && media[0].photo.text.length < 190) {
-                                mediaText = media[0].photo.text
-                                bot.telegram.sendPhoto(allParams.chatid, helps.getImgRes(media[0].photo), {
-                                    caption: `<a>${mediaText}</a>`,
-                                    parse_mode: 'HTML',
-                                    reply_markup: yes ? keyboardStr : '',
-                                    disable_web_page_preview: true
-                                }).then(output())
-                            } else if (mediaText.length > 190){
-                                bot.telegram.sendMessage(allParams.chatid,`<a href="${helps.getImgRes(media[0].photo)}">&#160;</a><a>${mediaText}</a>` ,{
-                                    parse_mode: 'HTML',
-                                    reply_markup: yes ? keyboardStr : '',
-                                    disable_web_page_preview: false
-                                })
-                            }
-                            break
-                        case 'doc':
-                            helps.VkApiDocGetById(allParams.vkToken, media[0].doc.owner_id, media[0].doc.id, (res) => {
-                                if (!res) {
-                                    res = {}
-                                    res.url = media[0].doc.url,
-                                        res.title = media[0].doc.title,
-                                        res.size = media[0].doc.size
-                                }
-                                if (res.size < 50000000) {
-                                    if (mediaText.length < 190){
-                                        bot.telegram.sendDocument(allParams.chatid, {
-                                            url: res.url,
-                                            filename: res.title
-                                        }, {
-                                            caption: `<a>${mediaText}</a>`,
-                                            reply_markup: yes ? keyboardStr : '',
-                                            parse_mode: 'HTML',
-                                            disable_web_page_preview: true
-                                        }).then(output())
-                                    } else {
-                                        bot.telegram.sendMessage(allParams.chatid, mediaText).then(()=>{
-                                            bot.telegram.sendDocument(allParams.chatid, {
-                                                url: res.url,
-                                                filename: res.title
-                                            }, {
-                                                caption: `<a>${mediaText}</a>`,
-                                                reply_markup: yes ? keyboardStr : '',
-                                                parse_mode: 'HTML',
-                                                disable_web_page_preview: true
-                                            }).then(output())
-                                        })
-                                    }
-                                } else {
-                                    bot.telegram.sendMessage(allParams.chatid, `<a>${mediaText}</a>\n\n<a href="${res.url}>${res.title}</a>`, {
-                                        reply_markup: yes ? keyboardStr : '',
-                                        parse_mode: 'HTML',
-                                        disable_web_page_preview: false
-                                    }).then(output())
-                                }
-                            })
-                            break
-                        case 'album':
-                            if (!mediaText && media[0].album.description.length < 190) {
-                                mediaText = media[0].album.description
-                            }
-                            keyboardStr = {
-                                inline_keyboard: [
-                                    [{
-                                        text: media[0].album.title,
-                                        url: 'https://vk.com/album' + media[0].album.owner_id + '_' + media[0].album.id
-                                    }]
-                                ]
-                            }
-                            bot.telegram.sendMessage(allParams.chatid, `<a href="${helps.getImgRes(media[0].album.thumb)}">&#160;</a><a>${mediaText}</a>`, {
-                                parse_mode: 'HTML',
-                                reply_markup: keyboardStr,
-                                disable_web_page_preview: false,
-                            }).then(() => {
-                                output()
-                            })
-                            break
-                    }
-                } else if ((media.length == 1) && (media[0].type == 'link')) {
-                    //console.log(media[0].link)
-                    bot.telegram.sendMessage(allParams.chatid, `<a href="${media[0].link.url}">&#160;</a><a>${mediaText}</a>\n\n<a href="${media[0].link.url}">Link</a>`, {
-                        disable_web_page_preview: false,
-                        parse_mode: 'HTML'
-                    }).then(() => {
-                        output()
-                    })
-                } else if (mediaText.length < 190 && helps.isAlbum(media)) {
-                    let arr = []
-                    for (key in media) {
-                        arr.push({
-                            type: 'photo',
-                            media: {
-                                url: helps.getImgRes(media[key].photo)
-                            },
-                            caption: mediaText ? `<a>${mediaText}</a>` : '',
-                            parse_mode: 'HTML'
-                        })
-                        mediaText = false
-                    }
-                    bot.telegram.sendMediaGroup(allParams.chatid, arr).then(output())
+
+        function vkPost(media) {
+            return new Promise((resolved, rejected) => {
+                let mediaText
+                //console.log(media) // Debug here
+                if (media.text) {
+                    mediaText = media.text
                 } else {
-                    media = media.filter(res => res.type != 'link')
-                    let i = 0
-                    if (mediaText) {
-                        bot.telegram.sendMessage(allParams.chatid, `<a>${mediaText}</a>`, {
-                            reply_markup: yes ? keyboardStr : '',
-                            disable_web_page_preview: true,
-                            parse_mode: 'HTML'
-                        }).then(()=>{
-                            yes = false
-                            mediaPoster()
-                        })
-                    } else {
-                        mediaPoster()
+                    mediaText = ''
+                }
+                console.log(mediaText)
+                mediaText = mediaText.replace(/\[([\S]*)\|([\S\s]*?)\]/ig, `<a href="https://vk.com/$1">$2</a>`)
+                console.log(mediaText)
+                if (media.attachments) { // Post generator start
+                    media = media.attachments
+                    let array = [],
+                        yes = false,
+                        link,
+                        keyboardStr
+                    for (let a = 0; a < media.length; a++) {
+                        array.push(media[a].type)
                     }
-                    function mediaPoster() {
-                        if (i < media.length) {
-                            switch (media[i].type){
-                                case 'photo':
-                                    let arr = []
-                                    while (i < media.length && media[i].type == 'photo') {
-                                        arr.push({
-                                            type: 'photo',
-                                            media: {
-                                                url: helps.getImgRes(media[i].photo)
-                                            },
-                                            caption: media[i].photo.text.length < 190 ? media[i].photo.text : ''
-                                        })
-                                        i++
-                                    }
-                                    i--
-                                    bot.telegram.sendMediaGroup(allParams.chatid, arr).then(() => {
-                                        i++
-                                        mediaPoster()
+                    if (array.indexOf('link') != -1) {
+                        yes = true
+                        link = array.indexOf('link')
+                        keyboardStr = {
+                            inline_keyboard: [
+                                [{
+                                    text: media[link].link.title,
+                                    url: media[link].link.url
+                                }]
+                            ]
+                        }
+                    }
+                    media = media.filter(res => res.type != 'audio' || res.type != 'poll')
+                    if (
+                        (media.length == 1 && media[0].type == 'video') ||
+                        (media.length == 2 && media[0].type == 'video' && media[1].type == 'link')
+                    ) {
+                        if (media[0].type == 'video') {
+                            helps.vkApi.video.get({
+                                    owner: media[0].video.owner_id,
+                                    id: media[0].video.id
+                                })
+                                .then(video =>
+                                    bot.telegram.sendMessage(params.chatid, `<a href="${video.player}">&#160;</a><a>${mediaText}</a>\n\n<a href="${video.player}">${video.title}</a>`, {
+                                        parse_mode: 'HTML',
+                                        disable_web_page_preview: false,
+                                        reply_markup: yes ? keyboardStr : ''
                                     })
-                                    break
-                                case 'video':
-                                    helps.VkApiVideoGet(allParams.vkToken, media[i].video.owner_id, media[i].video.id, function (res) {
-                                        bot.telegram.sendMessage(allParams.chatid, `<a href="${res.player}">${res.title}</a>`, {
-                                            parse_mode: 'HTML',
-                                            disable_web_page_preview: false,
-                                            reply_markup: yes ? keyboardStr : ''
-                                        }).then(() => {
-                                            yes = false
-                                            i++
-                                            mediaPoster()
-                                        })
+                                    .then(resolved())
+                                )
+                                .catch(rejected)
+                        }
+                    } else if (
+                        (media.length == 1 && media[0].type == 'photo' || media[0].type == 'doc' || media[0].type == 'album') ||
+                        (media.length == 2 && media[0].type == 'photo' || media[0].type == 'doc' || media[0].type == 'album' && media[1].type == 'link')
+                    ) {
+                        switch (media[0].type) {
+                            case 'photo':
+                                if (mediaText.length < 190 && !!mediaText) {
+                                    bot.telegram.sendPhoto(params.chatid, helps.getImgHiRes(media[0].photo), {
+                                        caption: `<a>${mediaText}</a>`,
+                                        parse_mode: 'HTML',
+                                        reply_markup: yes ? keyboardStr : '',
+                                        disable_web_page_preview: true
+                                    }).then(resolved())
+                                } else if (!mediaText && media[0].photo.text.length < 190) {
+                                    mediaText = media[0].photo.text
+                                    bot.telegram.sendPhoto(params.chatid, helps.getImgHiRes(media[0].photo), {
+                                        caption: `<a>${mediaText}</a>`,
+                                        parse_mode: 'HTML',
+                                        reply_markup: yes ? keyboardStr : '',
+                                        disable_web_page_preview: true
+                                    }).then(resolved())
+                                } else if (mediaText.length > 190) {
+                                    bot.telegram.sendMessage(params.chatid, `<a href="${helps.getImgHiRes(media[0].photo)}">&#160;</a><a>${mediaText}</a>`, {
+                                        parse_mode: 'HTML',
+                                        reply_markup: yes ? keyboardStr : '',
+                                        disable_web_page_preview: false
+                                    }).then(resolved())
+                                }
+                                break
+                            case 'doc':
+                                helps.vkApi.doc.getById({
+                                        owner: media[0].doc.owner_id,
+                                        id: media[0].doc.id
                                     })
-                                    break
-                                case 'doc':
-                                    helps.VkApiDocGetById(allParams.vkToken, media[i].doc.owner_id, media[i].doc.id, (res) => {
-                                        if (!res) {
-                                            res = {}
-                                            res.url = media[i].doc.url,
-                                                res.title = media[i].doc.title,
-                                                res.size = media[i].doc.size
+                                    .then(vkDocument => {
+                                        if (!vkDocument) {
+                                            vkDocument = {
+                                                url: media[0].doc.url,
+                                                title: media[0].doc.title,
+                                                size: media[0].doc.size
+                                            }
                                         }
-                                        if (res.size < 50000000) {
-                                            bot.telegram.sendDocument(allParams.chatid, {
-                                                url: res.url,
-                                                filename: res.title
-                                            }, {
-                                                reply_markup: yes ? keyboardStr : '',
-                                                parse_mode: 'HTML',
-                                                disable_web_page_preview: true
-                                            }).then(() => {
-                                                yes = false
-                                                i++
-                                                mediaPoster()
-                                            })
+                                        if (vkDocument.size < 50000000) {
+                                            if (mediaText.length < 190) {
+                                                bot.telegram.sendDocument(params.chatid, {
+                                                    url: vkDocument.url,
+                                                    filename: vkDocument.title
+                                                }, {
+                                                    caption: `<a>${mediaText}</a>`,
+                                                    reply_markup: yes ? keyboardStr : '',
+                                                    parse_mode: 'HTML',
+                                                    disable_web_page_preview: true
+                                                }).then(resolved())
+                                            } else {
+                                                bot.telegram.sendMessage(params.chatid, mediaText)
+                                                    .then(() =>
+                                                        bot.telegram.sendDocument(params.chatid, {
+                                                            url: vkDocument.url,
+                                                            filename: vkDocument.title
+                                                        }, {
+                                                            caption: `<a>${mediaText}</a>`,
+                                                            reply_markup: yes ? keyboardStr : '',
+                                                            parse_mode: 'HTML',
+                                                            disable_web_page_preview: true
+                                                        }).then(resolved())
+                                                    )
+                                            }
                                         } else {
-                                            bot.telegram.sendMessage(allParams.chatid, `<a href="${res.url}>${res.title}</a>`, {
+                                            bot.telegram.sendMessage(params.chatid, `<a>${mediaText}</a>\n\n<a href="${vkDocument.url}>${vkDocument.title}</a>`, {
                                                 reply_markup: yes ? keyboardStr : '',
                                                 parse_mode: 'HTML',
                                                 disable_web_page_preview: false
-                                            }).then(() => {
-                                                yes = false
-                                                i++
-                                                mediaPoster()
-                                            })
+                                            }).then(resolved())
                                         }
                                     })
-                                    break
-                                case 'album':
-                                    let keyboard = {
-                                        inline_keyboard: [
-                                            [{
-                                                text: media[i].album.title,
-                                                url: 'https://vk.com/album' + media[i].album.owner_id + '_' + media[i].album.id
-                                            }]
-                                        ]
-                                    }
-                                    bot.telegram.sendPhoto(allParams.chatid, helps.getImgRes(media[i].album.thumb), {
-                                        reply_markup: keyboard
-                                    }).then(() => {
-                                        i++
-                                        mediaPoster()
-                                    })
-                                    break
-                            }
+                                    .catch(rejected)
+
+                                break
+                            case 'album':
+                                if (!mediaText && media[0].album.description.length < 190) {
+                                    mediaText = media[0].album.description
+                                }
+                                keyboardStr = {
+                                    inline_keyboard: [
+                                        [{
+                                            text: media[0].album.title,
+                                            url: 'https://vk.com/album' + media[0].album.owner_id + '_' + media[0].album.id
+                                        }]
+                                    ]
+                                }
+                                bot.telegram.sendMessage(params.chatid, `<a href="${helps.getImgHiRes(media[0].album.thumb)}">&#160;</a><a>${mediaText}</a>`, {
+                                    parse_mode: 'HTML',
+                                    reply_markup: keyboardStr,
+                                    disable_web_page_preview: false,
+                                }).then(resolved())
+                                break
+                        }
+                    } else if (media.length == 1 && media[0].type == 'link') {
+                        //console.log(media[0].link)
+                        bot.telegram.sendMessage(params.chatid, `<a href="${media[0].link.url}">&#160;</a><a>${mediaText}</a>\n\n<a href="${media[0].link.url}">Link</a>`, {
+                                disable_web_page_preview: false,
+                                parse_mode: 'HTML'
+                            })
+                            .then(resolved())
+                    } else if (mediaText.length < 190 && helps.isAlbum(media)) {
+                        let arr = []
+                        for (key in media) {
+                            arr.push({
+                                type: 'photo',
+                                media: {
+                                    url: helps.getImgHiRes(media[key].photo)
+                                },
+                                caption: mediaText ? `<a>${mediaText}</a>` : '',
+                                parse_mode: 'HTML'
+                            })
+                            mediaText = null
+                        }
+                        bot.telegram.sendMediaGroup(params.chatid, arr)
+                            .then(resolved())
+                    } else {
+                        media = media.filter(res => res.type != 'link')
+                        let i = 0
+                        if (mediaText) {
+                            bot.telegram.sendMessage(params.chatid, `<a>${mediaText}</a>`, {
+                                reply_markup: yes ? keyboardStr : '',
+                                disable_web_page_preview: true,
+                                parse_mode: 'HTML'
+                            }).then(() => {
+                                yes = false
+                                mediaPoster()
+                            })
                         } else {
-                            output()
+                            mediaPoster()
+                        }
+
+                        function mediaPoster() {
+                            if (i < media.length) {
+                                switch (media[i].type) {
+                                    case 'photo':
+                                        let arr = []
+                                        while (i < media.length && media[i].type == 'photo') {
+                                            arr.push({
+                                                type: 'photo',
+                                                media: {
+                                                    url: helps.getImgHiRes(media[i].photo)
+                                                },
+                                                caption: media[i].photo.text.length < 190 ? media[i].photo.text : ''
+                                            })
+                                            i++
+                                        }
+                                        bot.telegram.sendMediaGroup(params.chatid, arr)
+                                            .then(mediaPoster())
+                                        break
+                                    case 'video':
+                                        helps.vkApi.video.get({
+                                                owner: media[i].video.owner_id,
+                                                id: media[i].video.id
+                                            })
+                                            .then(video =>
+                                                bot.telegram.sendMessage(params.chatid, `<a href="${video.player}">${video.title}</a>`, {
+                                                    parse_mode: 'HTML',
+                                                    disable_web_page_preview: false,
+                                                    reply_markup: yes ? keyboardStr : ''
+                                                }).then(() => {
+                                                    yes = false
+                                                    i++
+                                                    mediaPoster()
+                                                })
+                                            )
+                                            .catch(rejected)
+                                        break
+                                    case 'doc':
+                                        helps.vkApi.doc.getById({
+                                                owner: media[i].doc.owner_id,
+                                                id: media[i].doc.id
+                                            })
+                                            .then(vkDocument => {
+                                                if (!vkDocument) {
+                                                    vkDocument = {
+                                                        url: media[i].doc.url,
+                                                        title: media[i].doc.title,
+                                                        size: media[i].doc.size
+                                                    }
+                                                }
+                                                if (vkDocument.size < 50000000) {
+                                                    bot.telegram.sendDocument(params.chatid, {
+                                                        url: vkDocument.url,
+                                                        filename: vkDocument.title
+                                                    }, {
+                                                        reply_markup: yes ? keyboardStr : '',
+                                                        parse_mode: 'HTML',
+                                                        disable_web_page_preview: true
+                                                    }).then(() => {
+                                                        yes = false
+                                                        i++
+                                                        mediaPoster()
+                                                    })
+                                                } else {
+                                                    bot.telegram.sendMessage(params.chatid, `<a href="${vkDocument.url}>${vkDocument.title}</a>`, {
+                                                        reply_markup: yes ? keyboardStr : '',
+                                                        parse_mode: 'HTML',
+                                                        disable_web_page_preview: false
+                                                    }).then(() => {
+                                                        yes = false
+                                                        i++
+                                                        mediaPoster()
+                                                    })
+                                                }
+                                            })
+                                            .catch(rejected)
+                                        break
+                                    case 'album':
+                                        let keyboard = {
+                                            inline_keyboard: [
+                                                [{
+                                                    text: media[i].album.title,
+                                                    url: 'https://vk.com/album' + media[i].album.owner_id + '_' + media[i].album.id
+                                                }]
+                                            ]
+                                        }
+                                        bot.telegram.sendPhoto(params.chatid, helps.getImgHiRes(media[i].album.thumb), {
+                                            reply_markup: keyboard
+                                        }).then(() => {
+                                            i++
+                                            mediaPoster()
+                                        })
+                                        break
+                                }
+                            } else {
+                                resolved()
+                            }
                         }
                     }
-                }
-            } else {
-                if (mediaText) {
-                    bot.telegram.sendMessage(allParams.chatid, `<a>${mediaText}</a>`, {
-                        parse_mode: 'HTML',
-                        disable_web_page_preview: false
-                    }).then(output())
                 } else {
-                    output()
+                    if (mediaText) {
+                        bot.telegram.sendMessage(params.chatid, `<a>${mediaText}</a>`, {
+                            parse_mode: 'HTML',
+                            disable_web_page_preview: false
+                        }).then(resolved())
+                    } else {
+                        resolved()
+                    }
                 }
-            }
-        }
+            }) // Promise end
+        } // vkPost end
     }) // Post generator end
 }
 module.exports = Sender
