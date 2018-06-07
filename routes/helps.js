@@ -33,19 +33,22 @@ function VkApiVideoGet(data) {
                 if (err) return rej(err)
                 let body
                 try {
-                    body = JSON.parse(response.body).response.items[0]
+                    body = JSON.parse(response.body)
                 } catch (e) {
-                    rej('error parse data from VK API')
+                    rej(response.body)
                 }
+                //console.log(body)
+                body = body.response.items[0]
+                //console.log(body)
                 if (body && body.player) {
                     if (/https:\/\/vk\.com/i.test(body.player)) {
                         body.player = `https://vk.com/video${data.owner}_${data.id}`
                     }
                     if (/https:\/\/player\.vimeo\.com\/video/i.test(body.player)) {
-                        body.player = body.player.replace(/player\./, '').replace(/video\//, '')
+                        body.player = body.player.replace(/player\./i, '').replace(/video\//i, '')
                     }
                     if (/https:\/\/www\.youtube\.com\/embed/i.test(body.player)) {
-                        body.player = body.player.replace(/embed\//, 'watch?v=')
+                        body.player = body.player.replace(/embed\//i, 'watch?v=')
                     }
                     return res({
                         player: body.player,

@@ -102,12 +102,19 @@ function startSending(params, req, res) {
                                     id: media[0].video.id
                                 })
                                 .then(video =>
-                                    bot.telegram.sendMessage(params.chatid, `<a href="${video.player}">&#160;</a><a>${mediaText}</a>\n\n<a href="${video.player}">${video.title}</a>`, {
+                                    bot.telegram.sendMessage(params.chatid, `<a href="${video.player}">&#160;</a>${mediaText}\n\n<a href="${video.player}">${video.title}</a>`, {
                                         parse_mode: 'HTML',
                                         disable_web_page_preview: false,
                                         reply_markup: yes ? keyboardStr : ''
                                     })
-                                    .then(resolved())
+                                    .then(msg => {
+                                        console.log(msg)
+                                        if (!msg.response) {
+                                            resolved()
+                                        } else {
+                                            rejected(msg.response)
+                                        }
+                                    })
                                 )
                                 .catch(rejected)
                         }
@@ -123,7 +130,13 @@ function startSending(params, req, res) {
                                         parse_mode: 'HTML',
                                         reply_markup: yes ? keyboardStr : '',
                                         disable_web_page_preview: true
-                                    }).then(resolved())
+                                    }).then(msg => {
+                                        if (!msg.response) {
+                                            resolved()
+                                        } else {
+                                            rejected(msg.response)
+                                        }
+                                    })
                                 } else if (!mediaText && media[0].photo.text.length < 190) {
                                     mediaText = media[0].photo.text
                                     bot.telegram.sendPhoto(params.chatid, helps.getImgHiRes(media[0].photo), {
@@ -131,13 +144,25 @@ function startSending(params, req, res) {
                                         parse_mode: 'HTML',
                                         reply_markup: yes ? keyboardStr : '',
                                         disable_web_page_preview: true
-                                    }).then(resolved())
+                                    }).then(msg => {
+                                        if (!msg.response) {
+                                            resolved()
+                                        } else {
+                                            rejected(msg.response)
+                                        }
+                                    })
                                 } else if (mediaText.length > 190) {
-                                    bot.telegram.sendMessage(params.chatid, `<a href="${helps.getImgHiRes(media[0].photo)}">&#160;</a><a>${mediaText}</a>`, {
+                                    bot.telegram.sendMessage(params.chatid, `<a href="${helps.getImgHiRes(media[0].photo)}">&#160;</a>${mediaText}`, {
                                         parse_mode: 'HTML',
                                         reply_markup: yes ? keyboardStr : '',
                                         disable_web_page_preview: false
-                                    }).then(resolved())
+                                    }).then(msg => {
+                                        if (!msg.response) {
+                                            resolved()
+                                        } else {
+                                            rejected(msg.response)
+                                        }
+                                    })
                                 }
                                 break
                             case 'doc':
@@ -163,10 +188,21 @@ function startSending(params, req, res) {
                                                     reply_markup: yes ? keyboardStr : '',
                                                     parse_mode: 'HTML',
                                                     disable_web_page_preview: true
-                                                }).then(resolved())
+                                                }).then(msg => {
+                                                    if (!msg.response) {
+                                                        resolved()
+                                                    } else {
+                                                        rejected(msg.response)
+                                                    }
+                                                })
                                             } else {
                                                 bot.telegram.sendMessage(params.chatid, mediaText)
-                                                    .then(() =>
+                                                    .then((msg) => {
+                                                        if (!msg.response) {
+                                                            resolved()
+                                                        } else {
+                                                            rejected(msg.response)
+                                                        }
                                                         bot.telegram.sendDocument(params.chatid, {
                                                             url: vkDocument.url,
                                                             filename: vkDocument.title
@@ -175,15 +211,27 @@ function startSending(params, req, res) {
                                                             reply_markup: yes ? keyboardStr : '',
                                                             parse_mode: 'HTML',
                                                             disable_web_page_preview: true
-                                                        }).then(resolved())
-                                                    )
+                                                        }).then(msg1 => {
+                                                            if (!msg1.response) {
+                                                                resolved()
+                                                            } else {
+                                                                rejected(msg1.response)
+                                                            }
+                                                        })
+                                                    })
                                             }
                                         } else {
-                                            bot.telegram.sendMessage(params.chatid, `<a>${mediaText}</a>\n\n<a href="${vkDocument.url}>${vkDocument.title}</a>`, {
+                                            bot.telegram.sendMessage(params.chatid, `${mediaText}\n\n<a href="${vkDocument.url}>${vkDocument.title}</a>`, {
                                                 reply_markup: yes ? keyboardStr : '',
                                                 parse_mode: 'HTML',
                                                 disable_web_page_preview: false
-                                            }).then(resolved())
+                                            }).then(msg => {
+                                                if (!msg.response) {
+                                                    resolved()
+                                                } else {
+                                                    rejected(msg.response)
+                                                }
+                                            })
                                         }
                                     })
                                     .catch(rejected)
@@ -205,16 +253,28 @@ function startSending(params, req, res) {
                                     parse_mode: 'HTML',
                                     reply_markup: keyboardStr,
                                     disable_web_page_preview: false,
-                                }).then(resolved())
+                                }).then(msg => {
+                                    if (!msg.response) {
+                                        resolved()
+                                    } else {
+                                        rejected(msg.response)
+                                    }
+                                })
                                 break
                         }
                     } else if (media.length == 1 && media[0].type == 'link') {
                         //console.log(media[0].link)
-                        bot.telegram.sendMessage(params.chatid, `<a href="${media[0].link.url}">&#160;</a><a>${mediaText}</a>\n\n<a href="${media[0].link.url}">Link</a>`, {
+                        bot.telegram.sendMessage(params.chatid, `<a href="${media[0].link.url}">&#160;</a>${mediaText}\n\n<a href="${media[0].link.url}">Link</a>`, {
                                 disable_web_page_preview: false,
                                 parse_mode: 'HTML'
                             })
-                            .then(resolved())
+                            .then(msg => {
+                                if (!msg.response) {
+                                    resolved()
+                                } else {
+                                    rejected(msg.response)
+                                }
+                            })
                     } else if (mediaText.length < 190 && helps.isAlbum(media)) {
                         let arr = []
                         for (key in media) {
@@ -229,7 +289,13 @@ function startSending(params, req, res) {
                             mediaText = null
                         }
                         bot.telegram.sendMediaGroup(params.chatid, arr)
-                            .then(resolved())
+                            .then(msg => {
+                                if (!msg.response) {
+                                    resolved()
+                                } else {
+                                    rejected(msg.response)
+                                }
+                            })
                     } else {
                         media = media.filter(res => res.type != 'link')
                         let i = 0
@@ -238,9 +304,13 @@ function startSending(params, req, res) {
                                 reply_markup: yes ? keyboardStr : '',
                                 disable_web_page_preview: true,
                                 parse_mode: 'HTML'
-                            }).then(() => {
-                                yes = false
-                                mediaPoster()
+                            }).then((msg) => {
+                                if (!msg.response) {
+                                    yes = false
+                                    mediaPoster()
+                                } else {
+                                    rejected(msg.response)
+                                }
                             })
                         } else {
                             mediaPoster()
@@ -262,7 +332,13 @@ function startSending(params, req, res) {
                                             i++
                                         }
                                         bot.telegram.sendMediaGroup(params.chatid, arr)
-                                            .then(mediaPoster())
+                                            .then(msg => {
+                                                if (!msg.response) {
+                                                    mediaPoster()
+                                                } else {
+                                                    rejected(msg.response)
+                                                }
+                                            })
                                         break
                                     case 'video':
                                         helps.vkApi.video.get({
@@ -274,10 +350,14 @@ function startSending(params, req, res) {
                                                     parse_mode: 'HTML',
                                                     disable_web_page_preview: false,
                                                     reply_markup: yes ? keyboardStr : ''
-                                                }).then(() => {
-                                                    yes = false
-                                                    i++
-                                                    mediaPoster()
+                                                }).then((msg) => {
+                                                    if (!msg.response) {
+                                                        yes = false
+                                                        i++
+                                                        mediaPoster()
+                                                    } else {
+                                                        rejected(msg.response)
+                                                    }
                                                 })
                                             )
                                             .catch(rejected)
@@ -303,20 +383,28 @@ function startSending(params, req, res) {
                                                         reply_markup: yes ? keyboardStr : '',
                                                         parse_mode: 'HTML',
                                                         disable_web_page_preview: true
-                                                    }).then(() => {
-                                                        yes = false
-                                                        i++
-                                                        mediaPoster()
+                                                    }).then((msg) => {
+                                                        if (!msg.response) {
+                                                            yes = false
+                                                            i++
+                                                            mediaPoster()
+                                                        } else {
+                                                            rejected(msg.response)
+                                                        }
                                                     })
                                                 } else {
                                                     bot.telegram.sendMessage(params.chatid, `<a href="${vkDocument.url}>${vkDocument.title}</a>`, {
                                                         reply_markup: yes ? keyboardStr : '',
                                                         parse_mode: 'HTML',
                                                         disable_web_page_preview: false
-                                                    }).then(() => {
-                                                        yes = false
-                                                        i++
-                                                        mediaPoster()
+                                                    }).then((msg) => {
+                                                        if (!msg.response) {
+                                                            yes = false
+                                                            i++
+                                                            mediaPoster()
+                                                        } else {
+                                                            rejected(msg.response)
+                                                        }
                                                     })
                                                 }
                                             })
@@ -333,9 +421,13 @@ function startSending(params, req, res) {
                                         }
                                         bot.telegram.sendPhoto(params.chatid, helps.getImgHiRes(media[i].album.thumb), {
                                             reply_markup: keyboard
-                                        }).then(() => {
-                                            i++
-                                            mediaPoster()
+                                        }).then((msg) => {
+                                            if (!msg.response) {
+                                                i++
+                                                mediaPoster()
+                                            } else {
+                                                rejected(msg.response)
+                                            }
                                         })
                                         break
                                 }
@@ -346,10 +438,16 @@ function startSending(params, req, res) {
                     }
                 } else {
                     if (mediaText) {
-                        bot.telegram.sendMessage(params.chatid, `<a>${mediaText}</a>`, {
+                        bot.telegram.sendMessage(params.chatid, `${mediaText}`, {
                             parse_mode: 'HTML',
                             disable_web_page_preview: false
-                        }).then(resolved())
+                        }).then((msg) => {
+                            if (!msg.response) {
+                                resolved()
+                            } else {
+                                rejected(msg.response)
+                            }
+                        })
                     } else {
                         resolved()
                     }
