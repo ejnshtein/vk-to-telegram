@@ -9,7 +9,7 @@ class Sender {
      * @param {string} options.vkConfirmation - Confirmation token from VK group
      * @param {string} options.vkToken - Your VK API token
      * @param {string} options.ownerId - Your telegram id (@getidsbot)
-     * @param {string} [options.fromId=false] - VK group id
+     * @param {string} [options.fromId=null] - VK group id
      */
     constructor(options) {
         this.token = options.botToken
@@ -17,7 +17,7 @@ class Sender {
         this.vkConfirmation = options.vkConfirmation
         this.ownerId = options.ownerId
         this.vkToken = options.vkToken
-        this.fromId = options.fromId || false
+        this.fromId = options.fromId || null
         this.send = (req, res) => startSending(this, req, res)
     }
 }

@@ -6,6 +6,12 @@ Be careful, it **doesn't** sent **audio and poll's**(maybe fix soon).
 ## Where I can see how it looks?
 [Tavern of Heroes | Overwatch](https://vk.com/tavernofoverwatch) -> [Tavern of Overwatch | News](https://t.me/tavernofoverwatchnews),  
 [Oleg Livanov - One man army](https://vk.com/oleglivanovgaming) trought [Heroku](https://heroku.com) -> [Oleg Livanov - One man army](https://t.me/oleglivanovgaming)
+
+
+## Free usage
+
+If you want to test this code, or to use on a regular basis, please contact [me](https://t.me/ejnshtein) for details.
+
 ## Installation
     npm install vk-to-telegram@latest --save
 ### Example
