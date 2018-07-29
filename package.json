@@ -14,9 +14,6 @@
     "express"
   ],
   "private": false,
-  "scripts": {
-    "start": "node app.js"
-  },
   "module": "app",
   "main": "app",
   "dependencies": {

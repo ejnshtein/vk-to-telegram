@@ -2,7 +2,7 @@
 Powered by [Telegraf](https://github.com/telegraf/telegraf)  
 ## What is this?  
 It is a tool for express which using [VK callback api](https://vk.com/dev/callback_api) forwards posts from group in channel or chat in Telegram!  
-Be careful, it **doesn't** sent **audio and poll's**(maybe fix soon).
+Be careful, it **doesn't** send **audio and poll's**(maybe fix soon).
 ## Where I can see how it looks?
 [Tavern of Heroes | Overwatch](https://vk.com/tavernofoverwatch) -> [Tavern of Overwatch | News](https://t.me/tavernofoverwatchnews),  
 [Oleg Livanov - One man army](https://vk.com/oleglivanovgaming) trought [Heroku](https://heroku.com) -> [Oleg Livanov - One man army](https://t.me/oleglivanovgaming)
@@ -54,7 +54,7 @@ DON'T forget to pick event type 'WALL POST - NEW,REPOST' in your vk group api da
 ### Why?
 
 For example, because I had a lot of bot's and when fixing the bug is inconvenient to update the code in all bots.  
-Also, I have an idea to add discord channel support, but it's just idea. ᕦ( ͡° ͜ʖ ͡°)ᕤ
+Also, I have an idea to add discord channel support, but it's just an idea. ᕦ( ͡° ͜ʖ ͡°)ᕤ
 
 ### Contact
 Here's a telegram [group](https://t.me/vktotgforwarder) ¯\\_(ツ)_/¯   

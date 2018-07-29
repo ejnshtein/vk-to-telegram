@@ -61,7 +61,7 @@ function startSending(params, req, res) {
         function vkPost(media) {
             return new Promise((resolved, rejected) => {
                 let mediaText
-                //console.log(media) // Debug here
+                // console.log(media) // Debug here
                 if (media.text) {
                     mediaText = media.text
                 } else {
@@ -91,7 +91,7 @@ function startSending(params, req, res) {
                             ]
                         }
                     }
-                    media = media.filter(res => res.type != 'audio' || res.type != 'poll')
+                    media = media.filter(res => res.type != 'audio')
                     if (
                         (media.length == 1 && media[0].type == 'video') ||
                         (media.length == 2 && media[0].type == 'video' && media[1].type == 'link')
@@ -319,6 +319,11 @@ function startSending(params, req, res) {
                         function mediaPoster() {
                             if (i < media.length) {
                                 switch (media[i].type) {
+                                    case 'poll':
+                                        //console.log(media[i].poll)
+                                        i++
+                                        mediaPoster()
+                                        break
                                     case 'photo':
                                         let arr = []
                                         while (i < media.length && media[i].type == 'photo') {
