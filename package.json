@@ -1,6 +1,6 @@
 {
   "name": "vk-to-telegram",
-  "version": "0.0.15",
+  "version": "0.1.0",
   "description": "Vk to telegram forwarder",
   "author": "ejnshtein",
   "keywords": [
@@ -14,14 +14,23 @@
     "express"
   ],
   "private": false,
-  "module": "app",
-  "main": "app",
+  "main": "index.js",
+  "engines": {
+    "node": ">=8.9.0"
+  },
   "dependencies": {
-    "request": "^2.83.0",
-    "telegraf": "^3.21.2"
+    "axios": "^0.18.0",
+    "bytes": "^3.0.0",
+    "html-entities": "^1.2.1",
+    "telegraf": "^3.22.2"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/ejnshtein/vk-to-telegram.git"
+  },
+  "devDependencies": {
+    "body-parser": "^1.18.3",
+    "puppeteer": "^1.7.0",
+    "express": "^4.16.3"
   }
 }

@@ -10,7 +10,14 @@ const vkToTelegram = require('../'),
     app = require('express')(),
     bodyParser = require('body-parser')
 app.use(bodyParser.json())
-app.post('/', vkToTg.send)
+app.post('/', (req, res) => {
+    vkToTg.send(req, res)
+        .then(() => console.log('Done!'))
+        .catch((err) => {
+            console.log('Something went wrong')
+            console.log(err)
+        })
+})
 
 app.listen(80, () => {
     console.log('listening on port 80')
