@@ -14,6 +14,7 @@ const vkToTelegram = require('./index'),
         signed: '👨',
         heroku: true
     })
+    vkToTg.debug = true
     // vkToTg.debug = true
 app.use(bodyParser.json())
 app.post('/', (req, res) => {
@@ -22,7 +23,7 @@ app.post('/', (req, res) => {
             console.log(JSON.stringify(messages))
         })
         .catch(err => {
-            console.log(err)
+            console.log('err:',err)
         })
 })
 app.listen(80, () => {

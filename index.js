@@ -72,21 +72,29 @@ module.exports = class Forwarder {
                 } else {
                     response.send('ok')
                 }
+                if (this.debug) { util.log(herokuPosts) }
                 if (this.heroku) {
                     const newPost = { id: body.object.id, date: Date.now() }
-                    if (herokuPosts[body.group_id] && herokuPosts[body.group_id].length > 0) {
-                        herokuPosts[body.group_id] = herokuPosts[body.group_id].filter(el => Date.now() - el.date < this.herokuTimeout)
-                        const post = herokuPosts[body.group_id].find(el => el.id === body.object.id)
+                    if (herokuPosts[body.group_id] && Object.keys(herokuPosts[body.group_id]).length > 0) {
+                        for (const id in herokuPosts[body.group_id]) {
+                            const post = herokuPosts[body.group_id][id]
+                            if (Date.now() - post.date > this.herokuTimeout) {
+                                delete herokuPosts[body.group_id][id]
+                            }
+                        }
+                        const post = herokuPosts[body.group_id][newPost.id]
                         if (post) {
                             return reject(`Double post detected ${JSON.stringify(body.object)}`)
                         } else {
-                            herokuPosts[body.group_id].push(newPost)
+                            herokuPosts[body.group_id][newPost.id] = { date: newPost.date }
                         }
                     } else {
-                        herokuPosts[body.group_id] = [newPost]
+                        herokuPosts[body.group_id] = {
+                            [newPost.id]: { date: newPost.date }
+                        }
                     }
                 }
-                console.log(herokuPosts)
+                if (this.debug) { util.log(herokuPosts) }
                 telegram = new Telegram(this.token)
                 vkapi = vkApi(this.vkToken)
                 resolve()
@@ -110,7 +118,7 @@ module.exports = class Forwarder {
                                 return forwarder(body.object)
                             })
                     } else {
-                        return null
+                        return forwarder(body.object)
                     }
                 } else {
                     throw `post not sent ${body.object}`
