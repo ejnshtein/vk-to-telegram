@@ -95,33 +95,42 @@ module.exports = class Forwarder {
                     }
                 }
                 if (this.debug) { util.log(herokuPosts) }
-                telegram = new Telegram(this.token)
-                vkapi = vkApi(this.vkToken)
-                resolve()
+                
+                if ((this.fromId ? body.object.from_id === this.fromId : true) && body.type === 'wall_post_new' && body.object.post_type === 'post') {
+                    telegram = new Telegram(this.token)
+                    vkapi = vkApi(this.vkToken)
+                    resolve()
+                } else {
+                    reject('Post not sent')
+                }
+            })
+            .then(() => vkapi.wall.getById(`${body.object.owner_id}_${body.object.id}`,{
+                copy_history_depth: 1
+            }))
+            .then(response => {
+                if (response.response && response.response[0]) {
+                    body.object = response.response[0]
+                }
             })
             .then(() => this.chatId ? { id: this.chatId } : telegram.getChat(this.chatName))
             .then(chat => {
                 if (this.debug) { util.log(chat) }
                 this.chatId = chat.id
                 forwarder = forward(this)
-                if ((this.fromId ? body.object.from_id === this.fromId : true) && body.type === 'wall_post_new' && body.object.post_type === 'post') {
-                    if (body.object.text.length > 4090) {
-                        body.object.text = this.get('customLongPostText').replace(/\[([\S\s]*?)\]/ig, `<a href="https://vk.com/wall${body.object.owner_id}_${body.object.id}">$1</a>`)
-                    }
-                    if (this.signed && body.object.signer_id) {
-                        return vkapi.users.get(body.object.signer_id)
-                            .then(response => response.response[0])
-                            .then(signer => {
-                                if (signer) {
-                                    body.object.text += `\n\n[id${signer.id}|${this.signed} ${signer.first_name} ${signer.last_name ? signer.last_name : ''}]`
-                                }
-                                return forwarder(body.object)
-                            })
-                    } else {
-                        return forwarder(body.object)
-                    }
+                if (body.object.text.length > 4090) {
+                    body.object.text = this.get('customLongPostText').replace(/\[([\S\s]*?)\]/ig, `<a href="https://vk.com/wall${body.object.owner_id}_${body.object.id}">$1</a>`)
+                }
+                if (this.signed && body.object.signer_id) {
+                    return vkapi.users.get(body.object.signer_id)
+                        .then(response => response.response[0])
+                        .then(signer => {
+                            if (signer) {
+                                body.object.text += `\n\n[id${signer.id}|${this.signed} ${signer.first_name} ${signer.last_name ? signer.last_name : ''}]`
+                            }
+                            return forwarder(body.object)
+                        })
                 } else {
-                    throw `post not sent ${body.object}`
+                    return forwarder(body.object)
                 }
             })
             .then(message => {
