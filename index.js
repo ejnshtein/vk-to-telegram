@@ -104,7 +104,7 @@ module.exports = class Forwarder {
                     reject('Post not sent')
                 }
             })
-            .then(() => vkapi.wall.getById(`${body.object.owner_id}_${body.object.id}`,{
+            .then(() => vkapi.wall.getById(`${body.object.owner_id}_${body.object.id}`, {
                 copy_history_depth: 1
             }))
             .then(response => {
