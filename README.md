@@ -37,8 +37,8 @@ app.listen(80,()=>{
 It is a tool for express which using [VK callback api](https://vk.com/dev/callback_api) forwards posts from group in channel or chat in Telegram!  
 
 ## They use vk-to-telegram in production
-|[<img src="https://i.imgur.com/pra7Wez.jpg" width="120">](https://vk.com/tavernofoverwatch)|[<img src="https://i.imgur.com/2RR0fXh.png" width="120">](https://vk.com/panzer_sofa) | [<img src="https://i.imgur.com/51DrStx.jpg" width="120">](https://vk.com/oleglivanovgaming) |
-|-|-|-|
+| [<img src="https://i.imgur.com/pra7Wez.jpg" height="120">](https://vk.com/tavernofoverwatch) | [<img src="https://i.imgur.com/2RR0fXh.png" height="120">](https://vk.com/panzer_sofa) | [<img src="https://i.imgur.com/51DrStx.jpg" height="120">](https://vk.com/oleglivanovgaming) | [<img src="https://i.imgur.com/FnBpfyl.jpg" height="120">](https://vk.com/ongoing_research) |
+|-|-|-|-|
 
 ## What content does it forward?
 
