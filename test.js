@@ -1,8 +1,6 @@
-const vkToTelegram = require('./index'),
-    app = require('express')(),
-    bodyParser = require('body-parser'),
-    config = require('./config.json'),
-    vkToTg = new vkToTelegram({
+const vkToTelegram = require('./')
+const config = require('./config.json')
+const vkToTg = new vkToTelegram({
         botToken: config.botToken,
         chatName: config.chatName,
         vkConfirmation: config.vkConfirmation,
@@ -11,21 +9,32 @@ const vkToTelegram = require('./index'),
         customVkButton: config.customVkButton,
         customPollTitle: config.customPollTitle,
         customLongPostText: config.customLongPostText,
+        filterByWord: 'жопа',
+        filterByHashtag: '#jojo',
         signed: '👨',
-        heroku: true
+        heroku: false,
+        debug: true
     })
-    vkToTg.debug = true
-    // vkToTg.debug = true
-app.use(bodyParser.json())
-app.post('/', (req, res) => {
-    vkToTg.send(req, res)
-        .then(messages => {
-            console.log(JSON.stringify(messages))
-        })
-        .catch(err => {
-            console.log('err:',err)
-        })
-})
+const Koa = require('koa')
+const route = require('koa-route')
+const bodyParser = require('koa-bodyparser')
+const app = new Koa()
+app.use(bodyParser())
+app.use(route.post('/', async ctx => {
+    vkToTg.send(ctx)
+    // vkToTg.send({body: ctx.request.body, ip: ctx.request.ip }, { async send (data) {ctx.body = data} })
+    .then(console.log)
+    .catch(console.log)
+}))
+// app.post('/', (req, res) => {
+//     vkToTg.send(req, res)
+//         .then(messages => {
+//             console.log('sucs',JSON.stringify(messages))
+//         })
+//         .catch(err => {
+//             console.log('err:', err)
+//         })
+// })
 app.listen(80, () => {
     console.log('listening on port 80')
 })

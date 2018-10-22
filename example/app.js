@@ -3,8 +3,7 @@ const vkToTelegram = require('../'),
         botToken: 'your bot token',
         chatName: 'telegram chat/channel name',
         vkConfirmation: 'group confirmation',
-        ownerId: 'your telegram id',
-        fromId: 'your group id(example: -103208430)', // optional
+        ownerId: 'your telegranodem id',
         vkToken: 'your very long token from vk api'
     }),
     app = require('express')(),

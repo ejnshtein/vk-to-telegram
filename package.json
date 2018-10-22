@@ -1,6 +1,6 @@
 {
   "name": "vk-to-telegram",
-  "version": "0.1.5",
+  "version": "0.2.0b",
   "description": "Vk to telegram forwarder",
   "author": "ejnshtein",
   "keywords": [
@@ -21,7 +21,11 @@
   "dependencies": {
     "axios": "^0.18.0",
     "bytes": "^3.0.0",
+    "debug": "^4.1.0",
     "html-entities": "^1.2.1",
+    "koa": "^2.5.3",
+    "koa-bodyparser": "^4.2.1",
+    "koa-route": "^3.2.0",
     "telegraf": "^3.22.2"
   },
   "repository": {
