@@ -9,11 +9,7 @@ const vkToTg = new vkToTelegram({
         customVkButton: config.customVkButton,
         customPollTitle: config.customPollTitle,
         customLongPostText: config.customLongPostText,
-<<<<<<< HEAD
         filterByWord: 'someword',
-=======
-        filterByWord: 'жопа',
->>>>>>> 4cf1ef18fbc4787892a7bba7c9e60e22f7be5338
         filterByHashtag: '#jojo',
         signed: '👨',
         heroku: false,
