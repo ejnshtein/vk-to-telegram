@@ -1,174 +1,166 @@
-const forward = require('./lib/forwarder')
+const forwarder = require('./lib/forwarder')
+const debug = require('debug')('Forwarder')
 const Telegram = require('telegraf/telegram')
 const vkApi = require('./lib/vkapi')
-const util = require('util')
+const Filter = require('./lib/filter')
+// const util = require('util')
 const herokuPosts = {}
 
 module.exports = class Forwarder {
 
     /**
-     * @param {object} options
-     * @param {string} options.botToken - Telegram bot token from @botfather
-     * @param {string} options.chatName - Telegram chat name starts with @
-     * @param {String} [options.chatId] - Telegram chat id (will replace chatName)
-     * @param {string} options.vkConfirmation - Confirmation token from VK group
-     * @param {string} options.vkToken - Your VK API token (needs for media, like video or docs)
-     * @param {string} options.ownerId - Your telegram id (@getidsbot)
-     * @param {string} [options.fromId=null] - VK group id
-     * @param {Boolean} [options.debug] - Debug requests?
-     * @param {String} [options.customVkButton] - if empty no button will be appended
-     * @param {String} [options.customPollTitle] - Custom title before poll title ?
-     * @param {String} [options.customLongPostText] - If Post text too long for telegram(max 4096 char) send this text
-     * @param {Boolean} [options.heroku] - Heroku mode?
-     * @param {Number} [options.herokuTimeout] - Heroku posts timeout
-     * @param {String} [options.signed] - Show signer in post? (if available)
+     * @param {Object} options
+     * @param {String} options.botToken - Telegram bot token from @botfather
+     * @param {String} [options.chatName] - Telegram chat name starts with @
+     * @param {Number} [options.chatId] - Telegram chat id (will replace chatName)
+     * @param {String} options.vkConfirmation - Confirmation token from VK group
+     * @param {String} options.vkToken - Your VK API token (needs for media, like video or docs)
+     * @param {Number} options.ownerId - Your telegram id (@getidsbot)
+     * @param {String} [options.fromId=null] - VK group id
+     * @param {Boolean} [options.debug=false] - Debug requests?
+     * @param {String} [options.customVkButton=''] - if empty no button will be appended
+     * @param {String} [options.customPollTitle=''] - Custom title before poll title ?
+     * @param {String} [options.customLongPostText='[Read full post in VK]'] - If Post text too long for telegram(max 4096 char) send this text
+     * @param {Boolean} [options.heroku=false] - Heroku mode?
+     * @param {Number} [options.herokuTimeout=10000] - Heroku posts timeout
+     * @param {String} [options.signed='👨'] - Show signer in post? (if available)
+     * @param {String} [options.secret] - Secret key from your vk community
+     * @param {String} [options.filterByWord] - Filter posts by key word(s) (use '-' in start to invert)
+     * @param {String} [options.filterByHashtag] - Filter posts by hashtag (use '-' in start to invert)
      */
     constructor(options) { 
         this.token = options.botToken
-        this.chatName = /^@/ig.test(options.chatName) ? options.chatName : `@${options.chatName}`
+        this.chatName =  options.chatName ? options.chatName.startsWith('@') ? options.chatName : `@${options.chatName}` : ''
         this.vkConfirmation = options.vkConfirmation
         this.ownerId = options.ownerId
         this.vkToken = options.vkToken
         this.fromId = options.fromId || null
         this.chatId = options.chatId || null
         this.debug = options.debug || false
-        this.customVkButton = options.customVkButton || null
-        this.customPollTitle = options.customPollTitle || null
+        this.customVkButton = options.customVkButton || ''
+        this.customPollTitle = options.customPollTitle || ''
         this.customLongPostText = options.customLongPostText || '[Read full post in VK]'
-        this.heroku = options.heroku || null
+        this.heroku = options.heroku || false
         this.herokuTimeout = options.herokuTimeout || 10000
-        this.signed = options.signed || null
+        this.signed = options.signed || '👨'
+        this.secret = options.secret
+        this.filterByWord = options.filterByWord ? options.filterByWord.split(',') : []
+        this.filterByHashtag = options.filterByHashtag ? options.filterByHashtag.split(',') : []
         this.send = this.send.bind(this)
-        this.handleError = (err) => {
-            util.log(err)
-            throw err
-        }
     }
-    get (name) {
-        return this[name]
-    }
-    set (name, value) {
-        this[name] = value
-        return this
-    }
-    send (request, response) {
+    async send (ctx, res) {
         let body
-        
-        let telegram
-        let vkapi
-        const messages = []
-        let forwarder
-        
-        return new Promise((resolve, reject) => {
-                try {
-                    body = JSON.parse(JSON.stringify(request.body))
-                    if (this.debug) { util.log(body) }
-                } catch (e) {
-                    return reject(`Here's an error: \n\n${request.body}\n${request.ip}`)
-                }
-                if (body.type === 'confirmation') {
-                    response.send(this.vkConfirmation)
-                    return
-                } else {
-                    response.send('ok')
-                }
-                if (this.debug) { util.log(herokuPosts) }
-                if (this.heroku) {
-                    const newPost = { id: body.object.id, date: Date.now() }
-                    if (herokuPosts[body.group_id] && Object.keys(herokuPosts[body.group_id]).length > 0) {
-                        for (const id in herokuPosts[body.group_id]) {
-                            const post = herokuPosts[body.group_id][id]
-                            if (Date.now() - post.date > this.herokuTimeout) {
-                                delete herokuPosts[body.group_id][id]
-                            }
-                        }
-                        const post = herokuPosts[body.group_id][newPost.id]
-                        if (post) {
-                            return reject(`Double post detected ${JSON.stringify(body.object)}`)
-                        } else {
-                            herokuPosts[body.group_id][newPost.id] = { date: newPost.date }
-                        }
-                    } else {
-                        herokuPosts[body.group_id] = {
-                            [newPost.id]: { date: newPost.date }
-                        }
+        const request = () => {
+            if (ctx.message) {
+                return ctx.request
+            } else {
+                return ctx
+            }
+        }
+        const callback = async data => {
+            if (ctx.message) {
+                ctx.body = data
+            } else {
+                res.send(data)
+            }
+        }
+        try {
+            body = JSON.parse(JSON.stringify(request().body))
+        } catch (e) {
+            throw `Error with body from vk: \n\n${request().body}\n${request().ip}`
+        }
+        debug('Post body: %b', body) 
+        if (body.type === 'confirmation') {
+            await callback(this.vkConfirmation)
+            return
+        } else {
+            await callback('ok')
+        }
+        if (this.secret) {
+            if (!body.secret || body.secret !== this.secret) {
+                throw 'Secret field do not match'
+            }
+        }
+        const telegram = new Telegram(this.token)
+        const vkapi = vkApi(this.vkToken)
+        const filter = new Filter({
+            words: this.filterByWord,
+            tags: this.filterByHashtag
+        })
+
+        if (this.debug) {debug('heroku Obj: %p', herokuPosts) }
+        if (this.heroku) {
+            const newPost = { id: body.object.id, date: Date.now() }
+            if (herokuPosts[body.group_id] && Object.keys(herokuPosts[body.group_id]).length > 0) {
+                for (const id in herokuPosts[body.group_id]) {
+                    const post = herokuPosts[body.group_id][id]
+                    if (Date.now() - post.date > this.herokuTimeout) {
+                        delete herokuPosts[body.group_id][id]
                     }
                 }
-                if (this.debug) { util.log(herokuPosts) }
-                
-                if ((this.fromId ? body.object.from_id === this.fromId : true) && body.type === 'wall_post_new' && body.object.post_type === 'post') {
-                    telegram = new Telegram(this.token)
-                    vkapi = vkApi(this.vkToken)
-                    resolve()
+                const post = herokuPosts[body.group_id][newPost.id]
+                if (post) {
+
+                    throw `Double post detected ${JSON.stringify(body.object)}`
                 } else {
-                    reject('Post not sent')
+                    herokuPosts[body.group_id][newPost.id] = { date: newPost.date }
                 }
-            })
-            .then(() => vkapi.wall.getById(`${body.object.owner_id}_${body.object.id}`, {
+            } else {
+                herokuPosts[body.group_id] = {
+                    [newPost.id]: { date: newPost.date }
+                }
+            }
+        }
+        if (this.debug) {debug('heroku Obj: %p', herokuPosts) }
+        
+        if (this.fromId ? body.object.from_id !== this.fromId : false) {
+            throw `Wrong post from_id: ${body.object.from_id} !== ${this.fromId}`
+        }
+        if (body.type !== 'wall_post_new') {
+            throw 'Not a event.type wall_post_new'
+        }
+        if (body.object.post_type !== 'post') {
+            throw 'Not a post.type post'
+        }
+        const { response } = await vkapi.wall.getById(`${body.object.owner_id}_${body.object.id}`, {
                 copy_history_depth: 1
-            }))
-            .then(response => {
-                if (response.response && response.response[0]) {
-                    body.object = response.response[0]
-                }
             })
-            .then(() => this.chatId ? { id: this.chatId } : telegram.getChat(this.chatName))
-            .then(chat => {
-                if (this.debug) { util.log(chat) }
-                this.chatId = chat.id
-                forwarder = forward(this)
-                if (body.object.text.length > 4090) {
-                    body.object.text = this.get('customLongPostText').replace(/\[([\S\s]*?)\]/ig, `<a href="https://vk.com/wall${body.object.owner_id}_${body.object.id}">$1</a>`)
-                }
-                if (this.signed && body.object.signer_id) {
-                    return vkapi.users.get(body.object.signer_id)
-                        .then(response => response.response[0])
-                        .then(signer => {
-                            if (signer) {
-                                body.object.text += `\n\n[id${signer.id}|${this.signed} ${signer.first_name} ${signer.last_name ? signer.last_name : ''}]`
-                            }
-                            return forwarder(body.object)
-                        })
+
+        if (response.length) {
+            const messages = []
+            const post = response[0]
+            if (post.text) {
+                if (post.text.length > 4090) {
+                    post.text = this.get('customLongPostText').replace(/\[([\S\s]*?)\]/ig, `<a href="https://vk.com/wall${post.owner_id}_${post.id}">$1</a>`)
                 } else {
-                    return forwarder(body.object)
+                    filter(post.text)
                 }
-            })
-            .then(message => {
-                if (message) {
-                    messages.push({type:'post', post: message})
-                }
-                return
-            })
-            .then(() => {
-                if (body.object.copy_history) {
-                    const repost = body.object.copy_history[body.object.copy_history.length - 1]
+            }
+            const chatId = this.chatId ? this.chatId : (await telegram.getChat(this.chatName)).id
+            if (this.debug) { debug('chatId: %c', chatId) }
+            this.chatId = chatId
+            const forward = forwarder(this)
+            if (this.signed && post.signer_id) {
+                const signer = (await vkapi.users.get(post.signer_id)).response[0]
+                post.text += `\n\n[id${signer.id}|${this.signed} ${signer.first_name} ${signer.last_name ? signer.last_name : ''}]`
+            }
+            messages.push({type:'post', post: await forward(post)})
+            if (post.copy_history) {
+                const repost = post.copy_history[post.copy_history.length - 1]
+                if (repost.text) {
                     if (repost.text.length > 4090) {
-                        repost.text = this.get('customLongPostText').replace(/\[([\S\s]*?)\]/ig, `<a href="https://vk.com/wall${body.object.owner_id}_${body.object.id}">$1</a>`)
-                    }
-                    if (this.signed && repost.signer_id) {
-                        return vkapi.users.get(repost.signer_id)
-                            .then(response => response.response[0])
-                            .then(signer => {
-                                if (signer) {
-                                    repost.text += `\n\n[id${signer.id}|${this.signed} ${signer.first_name} ${signer.last_name ? signer.last_name : ''}]` // 👨
-                                }
-                                return forwarder(repost)
-                            })
+                        repost.text = this.customLongPostText.replace(/\[([\S\s]*?)\]/ig, `<a href="https://vk.com/wall${repost.owner_id}_${repost.id}">$1</a>`)
                     } else {
-                        return forwarder(repost)
+                        filter(repost.text)
                     }
-                } else {
-                    return null
                 }
-            })
-            .then(message => {
-                if (message) { messages.push({type:'repost', repost: message}) }
-                return messages
-            })
-    }
-    
-    catch (handler) {
-        this.handleError = handler
-        return this
+                if (this.signed && repost.signer_id) {
+                    const repostSigner = (await vkapi.users.get(repost.signer_id)).response[0]
+                    repost.text += `\n\n[id${repostSigner.id}|${this.signed} ${repostSigner.first_name} ${repostSigner.last_name ? repostSigner.last_name : ''}]`
+                }
+                messages.push({type: 'repost', post: await forward(repost)})
+            }
+            return messages
+        }
     }
 }

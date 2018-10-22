@@ -24,7 +24,7 @@ Powered by [Telegraf](https://github.com/telegraf/telegraf)
             vkToken: 'your very long token from vk api',
             vkConfirmation: 'group confirmation'
         })
-    app.use(bodyParser.json()) // Needs to parse request body
+    app.use(bodyParser.json())
     app.post('/', (req, res) => {
         vkToTg.send(req, res)
             .then(() => console.log('Done!'))
@@ -42,6 +42,18 @@ Powered by [Telegraf](https://github.com/telegraf/telegraf)
 ## What is this
 
 It is a tool for express which using [VK callback api](https://vk.com/dev/callback_api) forwards posts from group in channel or chat in Telegram!  
+
+## async/await
+
+Here's example with koa2
+
+```js
+    app.use(bodyParser())
+    app.use(async ctx => {
+        const result = await vkToTg.send(ctx)
+        console.log(result)
+    })
+```
 
 ## They use vk-to-telegram in production
 
@@ -90,9 +102,13 @@ If you want to test this code, or to use on a regular basis(beta, works via hero
 |`customLongPostText`|`String`|**Optional**|Custom template string that replace full post text, because it's too long for Telegram(max 4096 characters) ("Too long post... [Read full]" -> "Too long post... \<a href="https://vk.com/poll${poll.owner_id}_${poll.id}">Read full</a>" and parse as HTML)|
 |`signed`|`String`|**Optional**|Custom template string that add post signer in the end of Telegram message ("Post By" -> "\n\nPost by \<a href="https://vk.com/id${post.signer_id}">${signer.first_name} ${signer.last_name}</a>" and parse as HTML) |
 |`heroku`|`Boolean`|**Optional**|Add filter that stops forwarder if detect that post repeats(Because of app [sleeping](https://devcenter.heroku.com/articles/free-dyno-hours))|
+|`herokuTimeout`|`Number`|**Optional**|Heroku post delay between same posts|
+|`secret`|`String`|**Optional**|Secret field from vk admin panel to verify that post has come from VK|
+|`filterByWord`|`String`|**Optional**|Filter posts by key word(s) (use ',' as separator) (use '-' in begin of word to invert)|
+|`filterByHashtah`|`String`|**Optional**|Filter posts by hashtag (use ',' as separator) (use '-' in begin of word to invert)|
 
 * DON'T forget to pick in your vk group api dashboard event type 'WALL POST - NEW'.
-* Recommend to use vk api **v5.71**
+* Recommend to use vk api **v5.81**
 
 ## Contact
 
