@@ -60,7 +60,7 @@ Here's example with koa2
 | [<img src="https://i.imgur.com/pra7Wez.jpg" height="120">](https://vk.com/tavernofoverwatch) | [<img src="https://i.imgur.com/2RR0fXh.png" height="120">](https://vk.com/panzer_sofa) | [<img src="https://i.imgur.com/51DrStx.jpg" height="120">](https://vk.com/oleglivanovgaming) | [<img src="https://i.imgur.com/FnBpfyl.jpg" height="120">](https://vk.com/ongoing_research) |
 |-|-|-|-|
 
-## What content does it forward?
+## What content does it forward
 
 | Content type | Works fully? |  
 | - | - |  
@@ -106,12 +106,16 @@ If you want to test this code, or to use on a regular basis(beta, works via hero
 |`secret`|`String`|**Optional**|Secret field from vk admin panel to verify that post has come from VK|
 |`filterByWord`|`String`|**Optional**|Filter posts by key word(s) (use ',' as separator) (use '-' in begin of word to invert)|
 |`filterByHashtah`|`String`|**Optional**|Filter posts by hashtag (use ',' as separator) (use '-' in begin of word to invert)|
+|`ads`|`Boolean`|**Optional**|Forward posts marked as ads? (By default `true`)|
+|`repostAds`|`Boolean`|**Optional**|Forward reposts marked as ads? (By default `true`)|
+|`appendText`|`String`|**Optional**|Append text to forwarded post (can be used for hashtags for channel navigation)|
+|`prependText`|`String`|**Optional**|Same as `appendText` but it's will prepend it in the start of post text|
 
 * DON'T forget to pick in your vk group api dashboard event type 'WALL POST - NEW'.
 * Recommend to use vk api **v5.81**
 
 ## Contact
 
-Here's a telegram [group](https://t.me/vktotgforwarder) ¯\\_(ツ)_/¯   
+Here's a telegram [group](https://t.me/vktotgforwarder) ¯\\_(ツ)_/¯  
 Also u can write to me directly in [Telegram](https://t.me/ejnshtein),
 [VK](https://vk.com/lbmmbr001) or by [mail](mailto:ejnshtein@dsgstng.com)  

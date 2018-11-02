@@ -1,19 +1,16 @@
 const vkToTelegram = require('./')
 const config = require('./config.json')
 const vkToTg = new vkToTelegram({
-        botToken: config.botToken,
-        chatName: config.chatName,
-        vkConfirmation: config.vkConfirmation,
-        ownerId: config.ownerId,
-        vkToken: config.vkToken,
-        customVkButton: config.customVkButton,
-        customPollTitle: config.customPollTitle,
-        customLongPostText: config.customLongPostText,
+        ...config,
         filterByWord: 'someword',
         filterByHashtag: '#jojo',
         signed: '👨',
         heroku: false,
-        debug: true
+        debug: true,
+        prependText: '#overwatch',
+        appendText: '#hollycow',
+        ads: false,
+        repostAds: false
     })
 const Koa = require('koa')
 const route = require('koa-route')

@@ -27,8 +27,12 @@ module.exports = class Forwarder {
      * @param {String} [options.secret] - Secret key from your vk community
      * @param {String} [options.filterByWord] - Filter posts by key word(s) (use '-' in start to invert)
      * @param {String} [options.filterByHashtag] - Filter posts by hashtag (use '-' in start to invert)
+     * @param {Boolean} [options.ads=true] - Forward posts marked as ads? (By default `true`)
+     * @param {Boolean} [options.repostAds=true] - Forward reposts marked as ads? (By default `true`)
+     * @param {String} [options.appendText] - Append text to forwarded post (can be used for hashtags for channel navigation)
+     * @param {String} [options.prependText] - Same as `appendText` but it's will prepend it in the start of post text
      */
-    constructor(options) { 
+    constructor (options) {
         this.token = options.botToken
         this.chatName =  options.chatName ? options.chatName.startsWith('@') ? options.chatName : `@${options.chatName}` : ''
         this.vkConfirmation = options.vkConfirmation
@@ -43,9 +47,14 @@ module.exports = class Forwarder {
         this.heroku = options.heroku || false
         this.herokuTimeout = options.herokuTimeout || 10000
         this.signed = options.signed || '👨'
-        this.secret = options.secret
+        this.secret = options.secret || ''
         this.filterByWord = options.filterByWord ? options.filterByWord.split(',') : []
         this.filterByHashtag = options.filterByHashtag ? options.filterByHashtag.split(',') : []
+        this.ads = typeof options.ads === 'boolean' ? options.ads : true
+        this.repostAds = typeof options.repostAds === 'boolean' ? options.repostAds : true
+        this.appendText = options.appendText || ''
+        this.prependText = options.prependText || ''
+
         this.send = this.send.bind(this)
     }
     async send (ctx, res) {
@@ -69,7 +78,7 @@ module.exports = class Forwarder {
         } catch (e) {
             throw `Error with body from vk: \n\n${request().body}\n${request().ip}`
         }
-        debug('Post body: %b', body) 
+        debug('Post body: %b', body)
         if (body.type === 'confirmation') {
             await callback(this.vkConfirmation)
             return
@@ -100,7 +109,6 @@ module.exports = class Forwarder {
                 }
                 const post = herokuPosts[body.group_id][newPost.id]
                 if (post) {
-
                     throw `Double post detected ${JSON.stringify(body.object)}`
                 } else {
                     herokuPosts[body.group_id][newPost.id] = { date: newPost.date }
@@ -112,12 +120,11 @@ module.exports = class Forwarder {
             }
         }
         if (this.debug) {debug('heroku Obj: %p', herokuPosts) }
-        
         if (this.fromId ? body.object.from_id !== this.fromId : false) {
             throw `Wrong post from_id: ${body.object.from_id} !== ${this.fromId}`
         }
         if (body.type !== 'wall_post_new') {
-            throw 'Not a event.type wall_post_new'
+            throw 'Not a event.type wall_post_new' + ` ${body.type}`
         }
         if (body.object.post_type !== 'post') {
             throw 'Not a post.type post'
@@ -125,10 +132,14 @@ module.exports = class Forwarder {
         const { response } = await vkapi.wall.getById(`${body.object.owner_id}_${body.object.id}`, {
                 copy_history_depth: 1
             })
-
         if (response.length) {
             const messages = []
             const post = response[0]
+            if (!this.ads) {
+                if (typeof post.marked_as_ads === 'number' && post.marked_as_ads !== 0) {
+                    throw 'This is an ad. Rejecting.'
+                }
+            }
             if (post.text) {
                 if (post.text.length > 4090) {
                     post.text = this.get('customLongPostText').replace(/\[([\S\s]*?)\]/ig, `<a href="https://vk.com/wall${post.owner_id}_${post.id}">$1</a>`)
@@ -144,9 +155,20 @@ module.exports = class Forwarder {
                 const signer = (await vkapi.users.get(post.signer_id)).response[0]
                 post.text += `\n\n[id${signer.id}|${this.signed} ${signer.first_name} ${signer.last_name ? signer.last_name : ''}]`
             }
+            if (this.prependText) {
+                post.text = `${this.prependText}${post.text ? '\n' + post.text : ''}`
+            }
+            if (this.appendText) {
+                post.text = `${post.text ? post.text + '\n' : ''}${this.appendText}`
+            }
             messages.push({type:'post', post: await forward(post)})
             if (post.copy_history) {
                 const repost = post.copy_history[post.copy_history.length - 1]
+                if (!this.repostAds) {
+                    if (typeof repost.marked_as_ads === 'number' && repost.marked_as_ads !== 0) {
+                        throw 'Ad in repost. Rejecting.'
+                    }
+                }
                 if (repost.text) {
                     if (repost.text.length > 4090) {
                         repost.text = this.customLongPostText.replace(/\[([\S\s]*?)\]/ig, `<a href="https://vk.com/wall${repost.owner_id}_${repost.id}">$1</a>`)
