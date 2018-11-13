@@ -4,8 +4,8 @@ Powered by [Telegraf](https://github.com/telegraf/telegraf)
 [![NPM Version](https://img.shields.io/npm/v/vk-to-telegram.svg?style=flat-square)](https://www.npmjs.com/package/vk-to-telegram)
 [![node](https://img.shields.io/node/v/vk-to-telegram.svg?style=flat-square)](https://www.npmjs.com/package/vk-to-telegram)
 [![npm downloads](https://img.shields.io/npm/dm/vk-to-telegram.svg?style=flat-square)](http://npm-stat.com/charts.html?package=vk-to-telegram)
-[![telegram test channel](https://img.shields.io/badge/telegram-test%20channel-blue.svg)](https://t.me/vktotgforwarderchannel)
-[![telegram chat](https://img.shields.io/badge/telegram-chat-blue.svg)](https://t.me/vktotgforwarder)
+[![telegram test channel](https://img.shields.io/badge/telegram-test%20channel-blue.svg?style=flat-square)](https://t.me/vktotgforwarderchannel)
+[![telegram chat](https://img.shields.io/badge/telegram-chat-blue.svg?style=flat-square)](https://t.me/vktotgforwarder)
 
 ## Installation
 
