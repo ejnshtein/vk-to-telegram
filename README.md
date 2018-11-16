@@ -110,6 +110,7 @@ If you want to test this code, or to use on a regular basis(beta, works via hero
 |`repostAds`|`Boolean`|**Optional**|Forward reposts marked as ads? (By default `true`)|
 |`appendText`|`String`|**Optional**|Append text to forwarded post (can be used for hashtags for channel navigation)|
 |`prependText`|`String`|**Optional**|Same as `appendText` but it's will prepend it in the start of post text|
+|`repost`|`Boolean`|**Optional**|Allow to forward post with repost (By default `true`)|
 
 * DON'T forget to pick in your vk group api dashboard event type 'WALL POST - NEW'.
 * Recommend to use vk api **v5.81**
