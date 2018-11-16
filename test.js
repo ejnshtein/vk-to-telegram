@@ -10,7 +10,8 @@ const vkToTg = new vkToTelegram({
         prependText: '#overwatch',
         appendText: '#hollycow',
         ads: false,
-        repostAds: false
+        repostAds: false,
+        repost: false
     })
 const Koa = require('koa')
 const route = require('koa-route')

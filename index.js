@@ -31,6 +31,7 @@ module.exports = class Forwarder {
      * @param {Boolean} [options.repostAds=true] - Forward reposts marked as ads? (By default `true`)
      * @param {String} [options.appendText] - Append text to forwarded post (can be used for hashtags for channel navigation)
      * @param {String} [options.prependText] - Same as `appendText` but it's will prepend it in the start of post text
+     * @param {Boolean} [options.repost=true] - Forward posts with repost?
      */
     constructor (options) {
         this.token = options.botToken
@@ -54,6 +55,7 @@ module.exports = class Forwarder {
         this.repostAds = typeof options.repostAds === 'boolean' ? options.repostAds : true
         this.appendText = options.appendText || ''
         this.prependText = options.prependText || ''
+        this.repost = typeof options.repost === 'boolean' ? options.repost : true
 
         this.send = this.send.bind(this)
     }
@@ -132,7 +134,13 @@ module.exports = class Forwarder {
         const { response } = await vkapi.wall.getById(`${body.object.owner_id}_${body.object.id}`, {
                 copy_history_depth: 1
             })
+            // console.log(response)
         if (response.length) {
+            if (!this.repost) {
+                if (response[0].copy_history) {
+                    throw `Post contains repost: ${ JSON.stringify(response[0])}`
+                }
+            }
             const messages = []
             const post = response[0]
             if (!this.ads) {

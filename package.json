@@ -1,6 +1,6 @@
 {
   "name": "vk-to-telegram",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Vk to telegram forwarder",
   "author": "ejnshtein",
   "keywords": [
@@ -23,7 +23,7 @@
     "bytes": "^3.0.0",
     "debug": "^4.1.0",
     "html-entities": "^1.2.1",
-    "telegraf": "^3.22.2"
+    "telegraf": "^3.25.0"
   },
   "repository": {
     "type": "git",
@@ -31,10 +31,11 @@
   },
   "devDependencies": {
     "body-parser": "^1.18.3",
-    "puppeteer": "^1.7.0",
-    "express": "^4.16.3",
-    "koa": "^2.5.3",
+    "express": "^4.16.4",
+    "koa": "^2.6.1",
     "koa-bodyparser": "^4.2.1",
-    "koa-route": "^3.2.0"
-  }
+    "koa-route": "^3.2.0",
+    "puppeteer": "^1.10.0"
+  },
+  "license": "MIT"
 }
