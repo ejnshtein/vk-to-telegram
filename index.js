@@ -44,7 +44,7 @@ module.exports = class Forwarder {
         this.debug = options.debug || false
         this.customVkButton = options.customVkButton || ''
         this.customPollTitle = options.customPollTitle || ''
-        this.customLongPostText = options.customLongPostText || '[Read full post in VK]'
+        this.customLongPostText = typeof options.customLongPostText === 'string' ? options.customLongPostText : '[Read full post in VK]'
         this.heroku = options.heroku || false
         this.herokuTimeout = options.herokuTimeout || 10000
         this.signed = options.signed || '👨'
