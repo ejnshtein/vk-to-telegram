@@ -61,13 +61,13 @@ module.exports = class Forwarder {
     }
     async send (ctx, res) {
         let body
-        const request = () => {
+        const request = (() => {
             if (ctx.request) {
                 return ctx.request
             } else {
                 return ctx
             }
-        }
+        })()
         const callback = async data => {
             if (ctx.request) {
                 ctx.body = data
@@ -76,9 +76,9 @@ module.exports = class Forwarder {
             }
         }
         try {
-            body = JSON.parse(JSON.stringify(request().body))
+            body = JSON.parse(JSON.stringify(request.body))
         } catch (e) {
-            throw `Error with body from vk: \n\n${request().body}\n${request().ip}`
+            throw `Error with body from vk: \n\n${request.body}\n${request.ip}`
         }
         debug('Post body: %b', body)
         if (body.type === 'confirmation') {
@@ -101,26 +101,38 @@ module.exports = class Forwarder {
 
         if (this.debug) {debug('heroku Obj: %p', herokuPosts) }
         if (this.heroku) {
-            const newPost = { id: body.object.id, date: Date.now() }
-            if (herokuPosts[body.group_id] && Object.keys(herokuPosts[body.group_id]).length > 0) {
-                for (const id in herokuPosts[body.group_id]) {
-                    const post = herokuPosts[body.group_id][id]
-                    if (Date.now() - post.date > this.herokuTimeout) {
-                        delete herokuPosts[body.group_id][id]
+            const { originalUrl } = request
+            const newPost = { id: body.object.id, owner: body.object.owner_id, date: Date.now() }
+            if (herokuPosts[originalUrl] && Object.keys(herokuPosts[originalUrl]).length) {
+                for (const owner in herokuPosts[originalUrl]) {
+                    const group = herokuPosts[originalUrl][owner]
+                    if (Object.keys(group).length) {
+                        for (const postId in group) {
+                            const post = group[postId]
+                            if (Date.now() - post.date > this.herokuTimeout) {
+                                delete group[postId]
+                            }
+                        }
                     }
                 }
-                const post = herokuPosts[body.group_id][newPost.id]
+                let post
+                try {
+                    post = herokuPosts[originalUrl][newPost.owner][newPost.id]
+                } catch (e) {}
                 if (post) {
-                    throw `Double post detected ${JSON.stringify(body.object)}`
+                    throw `Double post detected: path - "${originalUrl}", post url - https://vk.com/wall${newPost.owner}_${newPost.id}`
                 } else {
-                    herokuPosts[body.group_id][newPost.id] = { date: newPost.date }
+                    herokuPosts[originalUrl][newPost.owner][newPost.id] = { date: newPost.date }
                 }
             } else {
-                herokuPosts[body.group_id] = {
-                    [newPost.id]: { date: newPost.date }
+                herokuPosts[originalUrl] = {
+                    [newPost.owner]: {
+                        [newPost.id]: { date: newPost.date }
+                    }
                 }
             }
         }
+        console.log(herokuPosts)
         if (this.debug) {debug('heroku Obj: %p', herokuPosts) }
         if (this.fromId ? body.object.from_id !== this.fromId : false) {
             throw `Wrong post from_id: ${body.object.from_id} !== ${this.fromId}`
