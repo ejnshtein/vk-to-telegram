@@ -132,7 +132,6 @@ module.exports = class Forwarder {
                 }
             }
         }
-        console.log(herokuPosts)
         if (this.debug) {debug('heroku Obj: %p', herokuPosts) }
         if (this.fromId ? body.object.from_id !== this.fromId : false) {
             throw `Wrong post from_id: ${body.object.from_id} !== ${this.fromId}`
