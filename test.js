@@ -10,20 +10,20 @@ const vkToTg = new vkToTelegram({
         prependText: '#overwatch',
         appendText: '#hollycow',
         ads: false,
-        repostAds: false,
-        repost: false
+        repostAds: false
     })
 const Koa = require('koa')
-const route = require('koa-route')
 const bodyParser = require('koa-bodyparser')
 const app = new Koa()
 app.use(bodyParser())
-app.use(route.post('/', async ctx => {
+app.use(async ctx => {
     vkToTg.send(ctx)
     // vkToTg.send({body: ctx.request.body, ip: ctx.request.ip }, { async send (data) {ctx.body = data} })
     .then(console.log)
-    .catch(console.log)
-}))
+    .catch(err => {
+        console.log(JSON.stringify(err))
+    })
+})
 // app.post('/', (req, res) => {
 //     vkToTg.send(req, res)
 //         .then(messages => {

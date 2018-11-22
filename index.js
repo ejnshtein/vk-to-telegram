@@ -1,5 +1,4 @@
 const forwarder = require('./lib/forwarder')
-const debug = require('debug')('Forwarder')
 const Telegram = require('telegraf/telegram')
 const vkApi = require('./lib/vkapi')
 const Filter = require('./lib/filter')
@@ -80,7 +79,6 @@ module.exports = class Forwarder {
         } catch (e) {
             throw `Error with body from vk: \n\n${request.body}\n${request.ip}`
         }
-        debug('Post body: %b', body)
         if (body.type === 'confirmation') {
             await callback(this.vkConfirmation)
             return
@@ -99,7 +97,6 @@ module.exports = class Forwarder {
             tags: this.filterByHashtag
         })
 
-        if (this.debug) {debug('heroku Obj: %p', herokuPosts) }
         if (this.heroku) {
             const { originalUrl } = request
             const newPost = { id: body.object.id, owner: body.object.owner_id, date: Date.now() }
@@ -132,7 +129,6 @@ module.exports = class Forwarder {
                 }
             }
         }
-        if (this.debug) {debug('heroku Obj: %p', herokuPosts) }
         if (this.fromId ? body.object.from_id !== this.fromId : false) {
             throw `Wrong post from_id: ${body.object.from_id} !== ${this.fromId}`
         }
@@ -167,7 +163,6 @@ module.exports = class Forwarder {
                 }
             }
             const chatId = this.chatId ? this.chatId : (await telegram.getChat(this.chatName)).id
-            if (this.debug) { debug('chatId: %c', chatId) }
             this.chatId = chatId
             const forward = forwarder(this)
             if (this.signed && post.signer_id) {
