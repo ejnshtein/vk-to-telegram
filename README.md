@@ -1,6 +1,5 @@
 # vk to telegram forwarder
 
-Powered by [Telegraf](https://github.com/telegraf/telegraf)  
 [![NPM Version](https://img.shields.io/npm/v/vk-to-telegram.svg?style=flat-square)](https://www.npmjs.com/package/vk-to-telegram)
 [![node](https://img.shields.io/node/v/vk-to-telegram.svg?style=flat-square)](https://www.npmjs.com/package/vk-to-telegram)
 [![npm downloads](https://img.shields.io/npm/dm/vk-to-telegram.svg?style=flat-square)](http://npm-stat.com/charts.html?package=vk-to-telegram)
