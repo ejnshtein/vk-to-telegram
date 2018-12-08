@@ -1,27 +1,27 @@
-const vkToTelegram = require('./')
+const VkToTelegram = require('./')
 const config = require('./config.json')
-const vkToTg = new vkToTelegram({
-        ...config,
-        filterByWord: 'someword',
-        filterByHashtag: '#jojo',
-        signed: '👨',
-        heroku: false,
-        debug: true,
-        prependText: '#overwatch',
-        appendText: '#hollycow',
-        ads: false,
-        repostAds: false
-    })
+const VkToTg = new VkToTelegram({
+  ...config,
+  filterByWord: 'someword',
+  filterByHashtag: '#jojo',
+  signed: '👨',
+  heroku: false,
+  debug: true,
+  prependText: '#overwatch',
+  appendText: '#hollycow',
+  ads: false,
+  repostAds: false
+})
 const Koa = require('koa')
 const bodyParser = require('koa-bodyparser')
 const app = new Koa()
 app.use(bodyParser())
 app.use(async ctx => {
-    vkToTg.send(ctx)
-    // vkToTg.send({body: ctx.request.body, ip: ctx.request.ip }, { async send (data) {ctx.body = data} })
+  console.log(ctx)
+  VkToTg.send(ctx)
     .then(console.log)
     .catch(err => {
-        console.log(JSON.stringify(err))
+      console.log(JSON.stringify(err))
     })
 })
 // app.post('/', (req, res) => {
@@ -34,5 +34,5 @@ app.use(async ctx => {
 //         })
 // })
 app.listen(80, () => {
-    console.log('listening on port 80')
+  console.log('listening on port 80')
 })
