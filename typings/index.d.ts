@@ -8,7 +8,7 @@ export interface Forwarder {
    * Menhod to forward data from vk trought your callback path.  
    * Works with Koa2 and Express.
    */
-  send(req: IncomingMessage, res?: ServerResponse): Promise<ResponseMessage[]>
+  send(req: IncomingMessage, res?: ServerResponse): Promise<Array<ResponseMessage>>
 }
 export interface ForwarderOptions {
   /**

@@ -35,13 +35,12 @@ module.exports = class Forwarder {
   }
   async send (ctx, res) {
     let body
-    const request = (() => {
-      if (ctx.request) {
-        return ctx.request
-      } else {
-        return ctx
-      }
-    })()
+    let request
+    if (ctx.request) {
+      request = ctx.request
+    } else {
+      request = ctx
+    }
     const callback = async data => {
       if (ctx.request) {
         ctx.body = data

@@ -12,13 +12,13 @@ const VkToTg = new VkToTelegram({
   ads: false,
   repostAds: false
 })
-const Koa = require('koa')
-const bodyParser = require('koa-bodyparser')
-const app = new Koa()
-app.use(bodyParser())
-app.use(async ctx => {
-  console.log(ctx)
-  VkToTg.send(ctx)
+const express = require('express')
+const bodyParser = require('body-parser')
+const app = express()
+app.use(bodyParser.json())
+app.use((req, res) => {
+  // console.log(req)
+  VkToTg.send(req, res)
     .then(console.log)
     .catch(err => {
       console.log(JSON.stringify(err))
