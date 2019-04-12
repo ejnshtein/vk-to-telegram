@@ -68,7 +68,7 @@ Here's example with koa2
 | Document(s) | `Yes` |
 | Link | `Yes` |  
 | Application Content | `Yes` |
-| Poll | **Not yet**, but forwarder will send link to poll. |
+| Poll | **Not yet**, but forwarder will send link to poll. (Native polls soon) |
 | Audio(s) | **NO.** Why? [Read here](https://vk.com/dev/audio). |
 | Album(s) | `Yes` |
 | Graffiti | `Not tested.` |
