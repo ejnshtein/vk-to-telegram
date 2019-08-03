@@ -68,7 +68,7 @@ Here's example with koa2
 | Document(s) | `Yes` |
 | Link | `Yes` |  
 | Application Content | `Yes` |
-| Poll | `Yes` and you can use native poll if you want (set `false` to option `sendNativePoll`) |
+| Poll | `Yes` |
 | Audio(s) | **NO.** Why? [Read here](https://vk.com/dev/audio). |
 | Album(s) | `Yes` |
 | Graffiti | `Not tested.` |
