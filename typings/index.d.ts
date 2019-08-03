@@ -118,6 +118,11 @@ export interface ForwarderOptions {
    * Forward posts with repost (By default `true`)
    */
   repost?: boolean
+
+  /**
+   * Send polls using native Telegram poll (By default `true`)
+   */
+  sendNativePoll?: boolean
 }
 interface ResponseMessage {
   type: 'post' | 'repost',

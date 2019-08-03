@@ -30,6 +30,7 @@ module.exports = class Forwarder {
     this.appendText = options.appendText || ''
     this.prependText = options.prependText || ''
     this.repost = typeof options.repost === 'boolean' ? options.repost : true
+    this.sendNativePoll = typeof options.sendNativePoll === 'boolean' ? options.sendNativePoll : true
 
     this.send = this.send.bind(this)
   }
@@ -125,7 +126,6 @@ module.exports = class Forwarder {
     const { response } = await vkapi.wall.getById(`${body.object.owner_id}_${body.object.id}`, {
       copy_history_depth: 1
     })
-    // console.log(response)
     if (response.length) {
       if (!this.repost) {
         if (response[0].copy_history) {

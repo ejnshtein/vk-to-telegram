@@ -7,10 +7,11 @@ const VkToTg = new VkToTelegram({
   signed: '👨',
   heroku: false,
   debug: true,
-  prependText: '#overwatch',
-  appendText: '#hollycow',
+  // prependText: '#overwatch',
+  // appendText: '#hollycow',
   ads: false,
-  repostAds: false
+  repostAds: false,
+  // sendNativePoll: false
 })
 const express = require('express')
 const bodyParser = require('body-parser')
@@ -19,7 +20,9 @@ app.use(bodyParser.json())
 app.use((req, res) => {
   // console.log(req)
   VkToTg.send(req, res)
-    .then(console.log)
+    .then(result => {
+      console.log('done', result)
+    })
     .catch(err => {
       console.log(JSON.stringify(err))
     })

@@ -68,7 +68,7 @@ Here's example with koa2
 | Document(s) | `Yes` |
 | Link | `Yes` |  
 | Application Content | `Yes` |
-| Poll | **Not yet**, but forwarder will send link to poll. (Native polls soon) |
+| Poll | `Yes` and you can use native poll if you want (set `false` to option `sendNativePoll`) |
 | Audio(s) | **NO.** Why? [Read here](https://vk.com/dev/audio). |
 | Album(s) | `Yes` |
 | Graffiti | `Not tested.` |
@@ -109,7 +109,8 @@ If you want to test this code, or to use on a regular basis(beta, works via hero
 |`repostAds`|`Boolean`|**Optional**|Forward reposts marked as ads? (By default `true`)|
 |`appendText`|`String`|**Optional**|Append text to forwarded post (can be used for hashtags for channel navigation)|
 |`prependText`|`String`|**Optional**|Same as `appendText` but it's will prepend it in the start of post text|
-|`repost`|`Boolean`|**Optional**|Allow to forward post with repost (By default `true`)|
+|`repost`|`Boolean`|**Optional**|Allow to forward post with repost (By default `true`)|  
+|`sendNativePoll`|`Boolean`|**Optional**|Use native [Telegram poll](https://core.telegram.org/bots/api#april-14-2019) instead of link to poll in VK, set `false` to use poll in VK|
 
 * DON'T forget to pick in your vk group api dashboard event type 'WALL POST - NEW'.
 * Recommend to use vk api **v5.81**
