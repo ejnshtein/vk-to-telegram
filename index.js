@@ -143,7 +143,7 @@ module.exports = class Forwarder {
         if (post.text.length > 4090) {
           post.text = this.get('customLongPostText').replace(/\[([\S\s]*?)\]/ig, `<a href="https://vk.com/wall${post.owner_id}_${post.id}">$1</a>`)
         } else {
-          filter(post.text)
+          await filter(post.text)
         }
       }
       const chatId = this.chatId ? this.chatId : (await telegram.getChat(this.chatName)).id
@@ -174,7 +174,7 @@ module.exports = class Forwarder {
           if (repost.text.length > 4090) {
             repost.text = this.customLongPostText.replace(/\[([\S\s]*?)\]/ig, `<a href="https://vk.com/wall${repost.owner_id}_${repost.id}">$1</a>`)
           } else {
-            filter(repost.text)
+            await filter(repost.text)
           }
         }
         if (this.signed && repost.signer_id) {
