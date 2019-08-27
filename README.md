@@ -104,7 +104,7 @@ If you want to test this code, or to use on a regular basis(beta, works via hero
 |`herokuTimeout`|`Number`|**Optional**|Heroku post delay between same posts|
 |`secret`|`String`|**Optional**|Secret field from vk admin panel to verify that post has come from VK|
 |`filterByWord`|`String`|**Optional**|Filter posts by key word(s) (use ',' as separator) (use '-' in begin of word to invert)|
-|`filterByHashtah`|`String`|**Optional**|Filter posts by hashtag (use ',' as separator) (use '-' in begin of word to invert)|
+|`filterByHashtag`|`String`|**Optional**|Filter posts by hashtag (use ',' as separator) (use '-' in begin of word to invert)|
 |`ads`|`Boolean`|**Optional**|Forward posts marked as ads? (By default `true`)|
 |`repostAds`|`Boolean`|**Optional**|Forward reposts marked as ads? (By default `true`)|
 |`appendText`|`String`|**Optional**|Append text to forwarded post (can be used for hashtags for channel navigation)|
