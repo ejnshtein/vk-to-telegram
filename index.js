@@ -3,7 +3,7 @@ const Telegram = require('telegraf/telegram')
 const vkApi = require('./lib/vkapi')
 const Filter = require('./lib/filter')
 // const util = require('util')
-const herokuPosts = {}
+let herokuPosts = {}
 /* eslint standard/no-callback-literal:0, padded-blocks:0 */
 
 module.exports = class Forwarder {
@@ -97,9 +97,21 @@ module.exports = class Forwarder {
         try {
           post = herokuPosts[originalUrl][newPost.owner][newPost.id]
         } catch (e) {
-          herokuPosts[originalUrl][newPost.owner][newPost.id] = {
-            date: newPost.date
+          herokuPosts = {
+            ...herokuPosts,
+            [originalUrl]: {
+              ...herokuPosts[originalUrl],
+              [newPost.owner]: {
+                ...herokuPosts[originalUrl][newPost.owner],
+                [newPost.id]: {
+                  date: newPost.date
+                }
+              }
+            }
           }
+          // herokuPosts[originalUrl][newPost.owner][newPost.id] = {
+          //   date: newPost.date
+          // }
         }
         if (post) {
           throw new Error(`Double post detected: path - "${originalUrl}", post url - https://vk.com/wall${newPost.owner}_${newPost.id}`)
