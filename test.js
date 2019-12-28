@@ -2,8 +2,6 @@ const VkToTelegram = require('./')
 const config = require('./config.json')
 const VkToTg = new VkToTelegram({
   ...config,
-  filterByWord: 'someword',
-  filterByHashtag: '#jojo',
   signed: '👨',
   heroku: false,
   debug: true,
@@ -24,7 +22,7 @@ app.use((req, res) => {
       console.log('done', result)
     })
     .catch(err => {
-      console.log(JSON.stringify(err))
+      console.log(err)
     })
 })
 // app.post('/', (req, res) => {
