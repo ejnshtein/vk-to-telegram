@@ -57,8 +57,10 @@ Here's example with koa2
 ## They use vk-to-telegram in production
 
 | [<img src="https://i.imgur.com/UYV2cfV.png" height="120">](https://vk.com/advance_empire) | [<img src="https://i.imgur.com/2RR0fXh.png" height="120">](https://vk.com/panzer_sofa) | [<img src="https://i.imgur.com/51DrStx.jpg" height="120">](https://vk.com/oleglivanovgaming) | [<img src="https://i.imgur.com/FnBpfyl.jpg" height="120">](https://vk.com/ongoing_research) |  
-|[<img src="https://i.imgur.com/7wydIxN.png"  height="120">](https://vk.com/anireact)|[<img src="https://i.imgur.com/Y0kda79.png"  height="120">](https://vk.com/otakusquad)|[<img src="https://i.imgur.com/yu6BNFj.png"  height="120">](https://vk.com/dsgtng)||
 |-|-|-|-|
+| [AlexandriA (AAR)](https://t.me/advance_emp) | [PanzerSofa](https://t.me/PanzerSofa) | [Олег Ливанов](https://t.me/oleglivanovgaming) | [ongoing research](https://t.me/ongoings) |
+| [<img src="https://i.imgur.com/7wydIxN.png"  height="120">](https://vk.com/anireact) | [<img src="https://i.imgur.com/Y0kda79.png"  height="120">](https://vk.com/otakusquad) | [<img src="https://i.imgur.com/yu6BNFj.png"  height="120">](https://vk.com/dsgtng) ||
+| [аниреакт](https://t.me/telereact) | [Otaku Squad](https://t.me/otakusquadt) | [disgusting otaku](https://t.me/dsgstngotakunews) ||
 
 ## What content does it forward
 
