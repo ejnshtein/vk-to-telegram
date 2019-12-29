@@ -56,7 +56,8 @@ Here's example with koa2
 
 ## They use vk-to-telegram in production
 
-| [<img src="https://i.imgur.com/pra7Wez.jpg" height="120">](https://vk.com/tavernofoverwatch) | [<img src="https://i.imgur.com/2RR0fXh.png" height="120">](https://vk.com/panzer_sofa) | [<img src="https://i.imgur.com/51DrStx.jpg" height="120">](https://vk.com/oleglivanovgaming) | [<img src="https://i.imgur.com/FnBpfyl.jpg" height="120">](https://vk.com/ongoing_research) |
+| [<img src="https://i.imgur.com/UYV2cfV.png" height="120">](https://vk.com/advance_empire) | [<img src="https://i.imgur.com/2RR0fXh.png" height="120">](https://vk.com/panzer_sofa) | [<img src="https://i.imgur.com/51DrStx.jpg" height="120">](https://vk.com/oleglivanovgaming) | [<img src="https://i.imgur.com/FnBpfyl.jpg" height="120">](https://vk.com/ongoing_research) |  
+|[<img src="https://i.imgur.com/7wydIxN.png"  height="120">](https://vk.com/anireact)|[<img src="https://i.imgur.com/Y0kda79.png"  height="120">](https://vk.com/otakusquad)|[<img src="https://i.imgur.com/yu6BNFj.png"  height="120">](https://vk.com/dsgtng)||
 |-|-|-|-|
 
 ## What content does it forward
