@@ -9,6 +9,7 @@ const VkToTg = new VkToTelegram({
   // appendText: '#hollycow',
   ads: false,
   repostAds: false,
+  criedHalfBea: true,
   // sendNativePoll: false
 })
 const express = require('express')

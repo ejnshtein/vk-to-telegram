@@ -114,6 +114,7 @@ If you want to test this code, or to use on a regular basis(beta, works via hero
 |`prependText`|`String`|**Optional**|Same as `appendText` but it's will prepend it in the start of post text|
 |`repost`|`Boolean`|**Optional**|Allow to forward post with repost (By default `true`)|  
 |`sendNativePoll`|`Boolean`|**Optional**|Use native [Telegram poll](https://core.telegram.org/bots/api#april-14-2019) instead of link to poll in VK, set `false` to use poll in VK|
+|`criedHalfBea`|`Boolean`|**Optional**|Use Z sized pictures as max. (Reduces pictures aliasing)|
 
 * DON'T forget to pick in your vk group api dashboard event type 'WALL POST - NEW'.
 * Recommend to use vk api **v5.81**

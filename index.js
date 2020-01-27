@@ -31,6 +31,7 @@ module.exports = class Forwarder {
     this.prependText = options.prependText || ''
     this.repost = typeof options.repost === 'boolean' ? options.repost : true
     this.sendNativePoll = typeof options.sendNativePoll === 'boolean' ? options.sendNativePoll : true
+    this.criedHalfBea = typeof options.criedHalfBea === 'boolean' ? options.criedHalfBea : false
 
     this.send = this.send.bind(this)
   }
