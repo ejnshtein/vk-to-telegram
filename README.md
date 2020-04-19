@@ -2,9 +2,6 @@
 
 [![NPM Version](https://img.shields.io/npm/v/vk-to-telegram.svg?style=flat-square)](https://www.npmjs.com/package/vk-to-telegram)
 [![node](https://img.shields.io/node/v/vk-to-telegram.svg?style=flat-square)](https://www.npmjs.com/package/vk-to-telegram)
-[![npm downloads](https://img.shields.io/npm/dm/vk-to-telegram.svg?style=flat-square)](http://npm-stat.com/charts.html?package=vk-to-telegram)
-[![telegram test channel](https://img.shields.io/badge/telegram-test%20channel-blue.svg?style=flat-square)](https://t.me/vktotgforwarderchannel)
-[![telegram chat](https://img.shields.io/badge/telegram-chat-blue.svg?style=flat-square)](https://t.me/joinchat/C3fG51BIAgI5lswcaRexMg)
 
 ## Installation
 
@@ -13,29 +10,29 @@
 ### Example
 
 ```js
-    const app = require('express')()
-    const bodyParser = require('body-parser')
-    const vkToTelegram = require('vk-to-telegram')
-    const vkToTg = new vkToTelegram({
-            botToken: 'your bot token',
-            chatName: 'telegram chat/channel name',
-            ownerId: 'your telegram id', // number
-            vkToken: 'your very long token from vk api',
-            vkConfirmation: 'group confirmation'
-        })
-    app.use(bodyParser.json())
-    app.post('/', (req, res) => {
-        vkToTg.send(req, res)
-            .then(() => console.log('Done!'))
-            .catch((err) => {
-                console.log('Something went wrong')
-                console.log(err)
-            })
+const app = require('express')()
+const bodyParser = require('body-parser')
+const vkToTelegram = require('vk-to-telegram')
+const vkToTg = new vkToTelegram({
+  botToken: 'your bot token',
+  chatName: 'telegram chat/channel name',
+  ownerId: 'your telegram id', // number
+  vkToken: 'your very long token from vk api',
+  vkConfirmation: 'group confirmation'
+})
+app.use(bodyParser.json())
+app.post('/', (req, res) => {
+  vkToTg.send(req, res)
+    .then(() => console.log('Done!'))
+    .catch((err) => {
+      console.log('Something went wrong')
+      console.log(err)
     })
+})
 
-    app.listen(80,()=>{
-        console.log('listening on port 80')
-    })
+app.listen(80, ()=>{
+  console.log('listening on port 80')
+})
 ```
 
 ## What is this
@@ -47,20 +44,20 @@ It is a tool for express which using [VK callback api](https://vk.com/dev/callba
 Here's example with koa2
 
 ```js
-    app.use(bodyParser())
-    app.use(async ctx => {
-        const result = await vkToTg.send(ctx)
-        console.log(result)
-    })
+app.use(bodyParser())
+app.use(async ctx => {
+  const result = await vkToTg.send(ctx)
+  console.log(result)
+})
 ```
 
-## They use vk-to-telegram in production
+## Used by:
 
 | [<img src="https://i.imgur.com/UYV2cfV.png" height="120">](https://vk.com/advance_empire) | [<img src="https://i.imgur.com/2RR0fXh.png" height="120">](https://vk.com/panzer_sofa) | [<img src="https://i.imgur.com/51DrStx.jpg" height="120">](https://vk.com/oleglivanovgaming) | [<img src="https://i.imgur.com/FnBpfyl.jpg" height="120">](https://vk.com/ongoing_research) |  
 |-|-|-|-|
 | [AlexandriA (AAR)](https://t.me/advance_emp) | [PanzerSofa](https://t.me/PanzerSofa) | [Олег Ливанов](https://t.me/oleglivanovgaming) | [ongoing research](https://t.me/ongoings) |
-| [<img src="https://i.imgur.com/7wydIxN.png"  height="120">](https://vk.com/anireact) | [<img src="https://i.imgur.com/Y0kda79.png"  height="120">](https://vk.com/otakusquad) | [<img src="https://i.imgur.com/yu6BNFj.png"  height="120">](https://vk.com/dsgtng) ||
-| [аниреакт](https://t.me/telereact) | [Otaku Squad](https://t.me/otakusquadt) | [disgusting otaku](https://t.me/dsgstngotakunews) ||
+| [<img src="https://i.imgur.com/7wydIxN.png"  height="120">](https://vk.com/anireact) | [<img src="https://i.imgur.com/Y0kda79.png"  height="120">](https://vk.com/otakusquad) | [<img src="https://i.imgur.com/yu6BNFj.png"  height="120">](https://vk.com/dsgtng) |[<img src="https://i.imgur.com/IBKqHUj.jpg"  height="120">](https://vk.com/fondspeedwagona)|
+| [аниреакт](https://t.me/telereact) | [Otaku Squad](https://t.me/otakusquadt) | [disgusting otaku](https://t.me/dsgstngotakunews) | [Fond SpeedWagona](https://t.me/jojomemesss)|
 
 ## What content does it forward
 
@@ -81,7 +78,7 @@ Here's example with koa2
 
 ## Free usage
 
-If you want to test this code, or to use on a regular basis(beta, works via heroku), please [contact](#contact) me for setup. It's simple ;)
+If you want to test this code, or use on a regular basis (via heroku), please [contact](#contact) me for setup.
 
 ## Variables
 
@@ -117,10 +114,8 @@ If you want to test this code, or to use on a regular basis(beta, works via hero
 |`criedHalfBea`|`Boolean`|**Optional**|Use Z sized pictures as max. (Reduces pictures aliasing)|
 
 * DON'T forget to pick in your vk group api dashboard event type 'WALL POST - NEW'.
-* Recommend to use vk api **v5.81**
+* Recommend to use vk api **v5.103**
 
 ## Contact
 
-Here's a telegram [group](https://t.me/vktotgforwarder) ¯\\_(ツ)_/¯  
-Also u can write to me directly in [Telegram](https://t.me/ejnshtein),
-[VK](https://vk.com/lbmmbr001) or by [mail](mailto:ejnshtein@dsgstng.com)  
+[Telegram group](https://t.me/vktotgforwarder), [Telegram](https://t.me/ejnshtein), [Mail](mailto:ejnshtein@dsgstng.com)
