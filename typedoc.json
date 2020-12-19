@@ -1,0 +1,12 @@
+{
+  "name": "vk-to-telegram",
+  "out": "docs",
+  "inputFiles": [
+    "src",
+    "types"
+  ],
+  "includeDeclarations": true,
+  "excludeExternals": true,
+  "includeVersion": true,
+  "sourcefile-url-prefix": "https://github.com/ejnshtein/vk-to-telegram/tree/master/"
+}

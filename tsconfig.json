@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "target": "ES2017",
+    "lib": ["ES6"],
+    "declaration": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "outDir": "dist",
+    "moduleResolution": "Node",
+    "baseUrl": ".",
+    "typeRoots": [
+      "types"
+    ]
+  },
+  "include": [
+    "src"
+  ]
+}
