@@ -1,10 +1,10 @@
 import { request, RequestOptions, ResponseTypeMap } from "smol-request";
 
-export const api = async <T, K = ResponseTypeMap>(
+export const api = async <T, K extends ResponseTypeMap>(
   method: string,
-  options: RequestOptions<K>
+  options: RequestOptions<'json'>
 ): Promise<T> => {
-  const response = await request<T>(`https://api.vk.com/method/${method}`, {
+  const { data } = await request<T, 'json'>(`https://api.vk.com/method/${method}`, {
     method: "GET",
     headers: {
       "User-Agent":
@@ -12,12 +12,12 @@ export const api = async <T, K = ResponseTypeMap>(
     },
     responseType: "json",
     ...options,
-  }).then(({ data }) => data);
+  })
 
-  return response;
+  return data;
 };
 
-module.exports = (token) => {
+export default (token) => {
   const defaultParams = {
     access_token: token,
     v: "5.81",

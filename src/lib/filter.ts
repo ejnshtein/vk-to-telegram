@@ -4,7 +4,7 @@ export const filter = ({
 }: {
   tags: string[];
   words: string[];
-}) => async (text: string): Promise<void> => {
+}) => (text: string): void => {
   if (words.length) {
     const containWords = tags.filter((word) => !word.startsWith("-"));
     if (containWords.length) {
